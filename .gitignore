@@ -1,0 +1,8 @@
+*.orig
+*.bak
+*~
+*.log
+*.orig
+.buildpath
+.project
+.settings/
