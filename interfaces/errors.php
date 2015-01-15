@@ -18,19 +18,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace shgysk8zer0\Core_API\Abstracts;
+namespace shgysk8zer0\Core_API\Interfaces;
 
 /**
- * Describes log levels
+ * All error classes should have a public static method named "reportError"
+ * to be called on errors.
  */
-abstract class LogLevel
+interface Errors
 {
-	const EMERGENCY = 'emergency';
-	const ALERT = 'alert';
-	const CRITICAL = 'critical';
-	const ERROR = 'error';
-	const WARNING = 'warning';
-	const NOTICE = 'notice';
-	const INFO = 'info';
-	const DEBUG = 'debug';
+	/**
+	 * Method to be set in `set_error_handler` and called automatically
+	 * when an error is triggered, either through `trigger_error` or naturally
+	 * through errors in a script.
+	 *
+	 * @param int    $level   Any of the error levels (E_*)
+	 * @param string $message Message given with the error
+	 * @param string $file    File generating the error
+	 * @param int    $line    Line on which the error occured
+	 * @param array  $context Symbols set when the error was triggered
+	 * @see http://php.net/manual/en/function.set-error-handler.php
+	 */
+	public static function reportError(
+		$level,
+		$message,
+		$file,
+		$line,
+		array $context = array()
+	);
 }

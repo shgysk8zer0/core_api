@@ -18,19 +18,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace shgysk8zer0\Core_API\Abstracts;
+namespace shgysk8zer0\Core_API\Traits;
 
-/**
- * Describes log levels
- */
-abstract class LogLevel
+trait Default_Log_Method
 {
-	const EMERGENCY = 'emergency';
-	const ALERT = 'alert';
-	const CRITICAL = 'critical';
-	const ERROR = 'error';
-	const WARNING = 'warning';
-	const NOTICE = 'notice';
-	const INFO = 'info';
-	const DEBUG = 'debug';
+	/**
+	* Logs with an arbitrary level.
+	*
+	* @param mixed $level
+	* @param string $message
+	* @param array $context
+	* @return null
+	*/
+	final public function log($level, $message, array $context = array())
+	{
+		if(! defined("\\shgysk8zer0\\Core_API\\Abstracts\\LogLevel::" . strtoupper($level))) {
+			throw new \InvalidArgumentException("Undefined log level: {$level}");
+		}
+		echo strtr(
+			$message,
+			array_combine(
+				array_map(
+					function($key)
+					{
+						return "{{$key}}";
+					},
+					array_keys($context)
+				),
+				array_values($context)
+			)
+		) . PHP_EOL;
+	}
 }
