@@ -20,6 +20,8 @@
  */
 namespace shgysk8zer0\Core_API\Abstracts;
 
+use \shgysk8zer0\Core_API as API;
+
 /**
  * This is a simple Logger implementation that other Loggers can inherit from.
  *
@@ -27,7 +29,7 @@ namespace shgysk8zer0\Core_API\Abstracts;
  * reduce boilerplate code that a simple Logger that does the same thing with
  * messages regardless of the error level has to implement.
  */
-abstract class Logger implements \shgysk8zer0\Core_API\Interfaces\Logger
+abstract class Logger implements API\Interfaces\Logger
 {
 	/**
 	 * System is unusable.
