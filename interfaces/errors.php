@@ -20,6 +20,10 @@
  */
 namespace shgysk8zer0\Core_API\Interfaces;
 
+/**
+ * All error classes should have a public static method named "reportError"
+ * to be called on errors.
+ */
 interface Errors
 {
 	/**

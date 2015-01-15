@@ -23,9 +23,11 @@ namespace shgysk8zer0\Core_API\Abstracts;
 use \shgysk8zer0\Core_API as API;
 
 /**
- *
+ * A combination of Errors and Logger class abstractions.
+ * Extend this class to
  */
-abstract class Error_Logger extends Logger implements API\Interfaces\Errors, API\Interfaces\Logger
+abstract class Error_Logger extends Logger
+implements API\Interfaces\Error_Logger, API\Interfaces\Errors
 {
 	use API\Traits\Logger;
 	use API\Traits\Errors;
@@ -33,7 +35,10 @@ abstract class Error_Logger extends Logger implements API\Interfaces\Errors, API
 	protected static $errorLoggerInstance = null;
 
 	/**
-	 * Registers $this::$hander method as `set_error_handler`
+	 * Registers $this::$hander method as `set_error_handler`.
+	 * Since Logger methods are not static, at some point the class will need
+	 * to be constructed, and it makes sense to set an error handler class
+	 * as the error handler in such cases.
 	 *
 	 * @param string $handler Method to use for reporting errors
 	 * @param int    $level   Error reporting level to use.

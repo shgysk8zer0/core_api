@@ -19,14 +19,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 namespace shgysk8zer0\Core_API\Interfaces;
+use Errors;
 
 /**
- *
+ * Combination of Errors and Logger Interfaces.
  */
 interface Error_Logger extends Logger
 {
 	/**
-	 * Registers $this::$hander method as `set_error_handler`
+	 * Registers $this::$hander method as `set_error_handler`.
+	 * Since Logger methods are not static, at some point the class will need
+	 * to be constructed, and it makes sense to set an error handler class
+	 * as the error handler in such cases.
 	 *
 	 * @param string $handler Method to use for reporting errors
 	 * @param int    $level   Error reporting level to use.
