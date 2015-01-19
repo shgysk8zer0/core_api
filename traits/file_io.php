@@ -28,7 +28,7 @@ namespace shgysk8zer0\Core_API\Traits;
  */
 trait File_IO
 {
-	protected $fileName;
+	use Path_Info;
 	/**
 	 * Opens the file in the specified mode designating read, write, create
 	 * capabilities. Obtains exclusive lock on file if $lock is true.
@@ -39,7 +39,7 @@ trait File_IO
 	 */
 	public function openFile($filename)
 	{
-		$this->fileName = $filename;
+		$this->getInfo($filename);
 	}
 
 	/**
@@ -52,7 +52,7 @@ trait File_IO
 	public function writeFile($content, $addNL = true)
 	{
 		file_put_contents(
-			$this->fileName,
+		$this->dirname . DIRECTORY_SEPARATOR . $this->basename,
 			($addNL) ? $content . PHP_EOL : $content,
 			FILE_APPEND | LOCK_EX
 		);
@@ -66,7 +66,9 @@ trait File_IO
 	 */
 	public function readFile()
 	{
-		return file_get_contents($this->fileName);
+		return file_get_contents(
+			$this->dirname . DIRECTORY_SEPARATOR . $this->basename
+		);
 	}
 
 	/**
@@ -77,7 +79,7 @@ trait File_IO
 	public function fileInfo($prop = null)
 	{
 		return (is_string($prop))
-			? stat($this->fileName)[$prop]
-			: stat($this->fileName);
+			? stat($this->dirname . DIRECTORY_SEPARATOR . $this->basename)[$prop]
+			: stat($this->dirname . DIRECTORY_SEPARATOR . $this->basename);
 	}
 }

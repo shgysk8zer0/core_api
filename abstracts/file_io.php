@@ -31,6 +31,7 @@ use \shgysk8zer0\Core_API as API;
  */
 abstract class File_IO implements API\Interfaces\File_IO
 {
+	use API\Traits\Path_Info;
 	const FILE_MODE = 'a+';
 	protected $fileResource;
 
@@ -44,7 +45,11 @@ abstract class File_IO implements API\Interfaces\File_IO
 	 */
 	final public function openFile($filename)
 	{
-		$this->fileResource = fopen($filename, self::FILE_MODE);
+		$this->getInfo($filename);
+		$this->fileResource = fopen(
+			$this->dirname . DIRECTORY_SEPARATOR . $this->basename,
+			self::FILE_MODE
+		);
 		return flock($this->fileResource, LOCK_EX);
 	}
 
