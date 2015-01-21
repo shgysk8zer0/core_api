@@ -53,6 +53,35 @@ abstract class Errors implements API\Interfaces\Errors
 	}
 
 	/**
+	 * Get all defined error levels ("E_*") as an array
+	 *
+	 * @param void
+	 * @return array
+	 */
+	public static function errorConstants()
+	{
+		return array_filter(
+			array_keys(get_defined_constants(true)['Core']),
+			function($const)
+			{
+				return strrpos($const, 'E_', -strlen($const)) !== FALSE;
+			}
+		);
+	}
+
+	/**
+	 * Converts error constants (int) into strings
+	 *
+	 * @param int $level From E_* constants
+	 * @return string
+	 * @example static::errorLevelAsString(256); // returns "E_USER_ERROR"
+	 */
+	final public static function errorLevelAsString($level)
+	{
+		return array_search($level, get_defined_constants(true)['Core']);
+	}
+
+	/**
 	 * Method to be set in `set_error_handler` and called automatically
 	 * when an error is triggered, either through `trigger_error` or naturally
 	 * through errors in a script.
