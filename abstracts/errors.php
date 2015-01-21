@@ -80,24 +80,4 @@ abstract class Errors implements API\Interfaces\Errors
 	{
 		return array_search($level, get_defined_constants(true)['Core']);
 	}
-
-	/**
-	 * Method to be set in `set_error_handler` and called automatically
-	 * when an error is triggered, either through `trigger_error` or naturally
-	 * through errors in a script.
-	 *
-	 * @param int    $level   Any of the error levels (E_*)
-	 * @param string $message Message given with the error
-	 * @param string $file    File generating the error
-	 * @param int    $line    Line on which the error occured
-	 * @param array  $context Symbols set when the error was triggered
-	 * @see http://php.net/manual/en/function.set-error-handler.php
-	 */
-	abstract public static function reportError(
-		$level,
-		$message,
-		$file,
-		$line,
-		array $context = array()
-	);
 }
