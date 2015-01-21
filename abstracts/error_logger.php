@@ -24,7 +24,7 @@ use \shgysk8zer0\Core_API as API;
 
 /**
  * A combination of Errors and Logger class abstractions.
- * Extend this class to
+ * Extend this class to inherit useful methods for implementing an error logger.
  */
 abstract class Error_Logger extends Logger
 implements API\Interfaces\Error_Logger, API\Interfaces\Errors

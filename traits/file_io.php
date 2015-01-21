@@ -73,6 +73,7 @@ trait File_IO
 
 	/**
 	 * Get information about the file
+	 * 
 	 * @param string $prop Specific property to retrieve
 	 * @return mixed Array if $prop is null, string or int otherwise
 	 */

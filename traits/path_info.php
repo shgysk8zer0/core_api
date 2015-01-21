@@ -20,6 +20,11 @@
  */
 namespace shgysk8zer0\Core_API\Traits;
 
+/**
+ * Gets pathinfo about $path, such as direcory and file name, as well
+ * as extension and basename (file name + extension). Set protected class
+ * variables for each.
+ */
 trait Path_Info
 {
 	protected $dirname, $basename, $extension, $filename;

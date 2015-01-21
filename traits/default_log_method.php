@@ -20,6 +20,9 @@
  */
 namespace shgysk8zer0\Core_API\Traits;
 
+/**
+ * Provides a default PSR-3 logger log method.
+ */
 trait Default_Log_Method
 {
 	/**

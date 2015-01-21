@@ -20,6 +20,10 @@
 */
 namespace shgysk8zer0\Core_API\Traits;
 
+/**
+ * Provides a static method for converting Errors into ErrorExceptions. Parent
+ * class must provide a "reportError" method to comply with its interface.
+ */
 trait Errors
 {
 	/**

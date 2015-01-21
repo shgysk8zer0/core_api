@@ -23,12 +23,17 @@ namespace shgysk8zer0\Core_API\Traits;
 use \shgysk8zer0\Core_API as API;
 use API\Abstracts\LogLevel as LogLevel;
 
+/**
+ * A combination of Errors and Logger class abstractions.
+ * Use this trait to inherit useful methods for implementing an error logger.
+ */
 trait Error_Logger
 {
 	protected static $errorLoggerInstance = null;
 
 	/**
 	* Converts error constants into PSR-3 defined log levels
+	*
 	* @param string $e_level E_* error level
 	* @return string             Log level as defined by LogLevel constants
 	*/
@@ -60,6 +65,13 @@ trait Error_Logger
 		}
 	}
 
+	/**
+	 * Call a logger from an Error constant and an error message
+	 *
+	 * @param int    $level   From E_* constants
+	 * @param string $message The error's error message
+	 * @return void
+	 */
 	final static function callErrorLogger($level, $message)
 	{
 		if (is_null(static::$errorLoggerInstance)) {

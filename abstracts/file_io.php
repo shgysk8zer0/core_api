@@ -21,6 +21,7 @@
 namespace shgysk8zer0\Core_API\Abstracts;
 
 use \shgysk8zer0\Core_API as API;
+
 /**
  * Standard class for reading and writing to/from files.
  * Extend this abstract class and `openFile` with the file to work with.

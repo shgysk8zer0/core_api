@@ -21,8 +21,10 @@
 namespace shgysk8zer0\Core_API\Abstracts;
 
 use \shgysk8zer0\Core_API as API;
+
 /**
- *
+ * Provides a static method for converting Errors into ErrorExceptions and
+ * an abstract method to report errors (must be in parent class)
  */
 abstract class Errors implements API\Interfaces\Errors
 {
