@@ -32,6 +32,11 @@ implements API\Interfaces\Error_Logger, API\Interfaces\Errors
 	use API\Traits\Logger;
 	use API\Traits\Errors;
 
+	/**
+	 * Keep a static instance of class for use in static functions
+	 *
+	 * @var self
+	 */
 	protected static $errorLoggerInstance = null;
 
 	/**
