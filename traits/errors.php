@@ -20,18 +20,22 @@
 */
 namespace shgysk8zer0\Core_API\Traits;
 
+/**
+ * Provides a static method for converting Errors into ErrorExceptions. Parent
+ * class must provide a "reportError" method to comply with its interface.
+ */
 trait Errors
 {
 	/**
-	* Throws, catches, and returns an \ErrorException created from error args
-	*
-	* @param int    $level   Any of the error levels (E_*)
-	* @param string $message Message given with the error
-	* @param string $file    File generating the error
-	* @param int    $line    Line on which the error occured
-	* @return \ErrorException
-	* @see http://php.net/manual/en/class.errorexception.php
-	*/
+	 * Throws, catches, and returns an \ErrorException created from error args
+	 *
+	 * @param int    $level   Any of the error levels (E_*)
+	 * @param string $message Message given with the error
+	 * @param string $file    File generating the error
+	 * @param int    $line    Line on which the error occured
+	 * @return \ErrorException
+	 * @see http://php.net/manual/en/class.errorexception.php
+	 */
 	protected static function errorToException(
 		$level,
 		$message,
@@ -44,5 +48,34 @@ trait Errors
 		} catch(\ErrorException $e) {
 			return $e;
 		}
+	}
+
+	/**
+	 * Get all defined error levels ("E_*") as an array
+	 *
+	 * @param void
+	 * @return array
+	 */
+	public static function errorConstants()
+	{
+		return array_filter(
+			array_keys(get_defined_constants(true)['Core']),
+			function($const)
+			{
+				return strrpos($const, 'E_', -strlen($const)) !== false;
+			}
+		);
+	}
+
+	/**
+	 * Converts error constants (int) into strings
+	 *
+	 * @param int $level From E_* constants
+	 * @return string
+	 * @example static::errorLevelAsString(256); // returns "E_USER_ERROR"
+	 */
+	final public static function errorLevelAsString($level)
+	{
+		return array_search($level, get_defined_constants(true)['Core']);
 	}
 }

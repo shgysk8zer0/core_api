@@ -20,16 +20,19 @@
  */
 namespace shgysk8zer0\Core_API\Traits;
 
+/**
+ * Provides a default PSR-3 logger log method.
+ */
 trait Default_Log_Method
 {
 	/**
-	* Logs with an arbitrary level.
-	*
-	* @param mixed $level
-	* @param string $message
-	* @param array $context
-	* @return null
-	*/
+	 * Logs with an arbitrary level.
+	 *
+	 * @param mixed $level
+	 * @param string $message
+	 * @param array $context
+	 * @return null
+	 */
 	final public function log($level, $message, array $context = array())
 	{
 		if(! defined("\\shgysk8zer0\\Core_API\\Abstracts\\LogLevel::" . strtoupper($level))) {

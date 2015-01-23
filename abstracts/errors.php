@@ -21,8 +21,10 @@
 namespace shgysk8zer0\Core_API\Abstracts;
 
 use \shgysk8zer0\Core_API as API;
+
 /**
- *
+ * Provides a static method for converting Errors into ErrorExceptions and
+ * an abstract method to report errors (must be in parent class)
  */
 abstract class Errors implements API\Interfaces\Errors
 {
@@ -51,22 +53,31 @@ abstract class Errors implements API\Interfaces\Errors
 	}
 
 	/**
-	 * Method to be set in `set_error_handler` and called automatically
-	 * when an error is triggered, either through `trigger_error` or naturally
-	 * through errors in a script.
+	 * Get all defined error levels ("E_*") as an array
 	 *
-	 * @param int    $level   Any of the error levels (E_*)
-	 * @param string $message Message given with the error
-	 * @param string $file    File generating the error
-	 * @param int    $line    Line on which the error occured
-	 * @param array  $context Symbols set when the error was triggered
-	 * @see http://php.net/manual/en/function.set-error-handler.php
+	 * @param void
+	 * @return array
 	 */
-	abstract public static function reportError(
-		$level,
-		$message,
-		$file,
-		$line,
-		array $context = array()
-	);
+	public static function errorConstants()
+	{
+		return array_filter(
+			array_keys(get_defined_constants(true)['Core']),
+			function($const)
+			{
+				return strrpos($const, 'E_', -strlen($const)) !== FALSE;
+			}
+		);
+	}
+
+	/**
+	 * Converts error constants (int) into strings
+	 *
+	 * @param int $level From E_* constants
+	 * @return string
+	 * @example static::errorLevelAsString(256); // returns "E_USER_ERROR"
+	 */
+	final public static function errorLevelAsString($level)
+	{
+		return array_search($level, get_defined_constants(true)['Core']);
+	}
 }

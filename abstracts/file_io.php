@@ -21,6 +21,7 @@
 namespace shgysk8zer0\Core_API\Abstracts;
 
 use \shgysk8zer0\Core_API as API;
+
 /**
  * Standard class for reading and writing to/from files.
  * Extend this abstract class and `openFile` with the file to work with.
@@ -32,7 +33,14 @@ use \shgysk8zer0\Core_API as API;
 abstract class File_IO implements API\Interfaces\File_IO
 {
 	use API\Traits\Path_Info;
+
 	const FILE_MODE = 'a+';
+
+	/**
+	 * File handle
+	 * 
+	 * @var resource
+	 */
 	protected $fileResource;
 
 	/**
@@ -40,12 +48,13 @@ abstract class File_IO implements API\Interfaces\File_IO
 	 * capabilities. Obtains exclusive lock on file, which is released when class
 	 * is destroyed.
 	 *
-	 * @param string $filename Name/path of file to be working with
+	 * @param string $filename         Name/path of file to be working with
+	 * @param bool   $use_include_path If you want to search for the file in the include_path
 	 * @return bool  Whether or not lock was able to be obtained.
 	 */
-	final public function openFile($filename)
+	final public function openFile($filename, $use_include_path = false)
 	{
-		$this->getInfo($filename);
+		$this->getPathInfo($filename, $use_include_path);
 		$this->fileResource = fopen(
 			$this->dirname . DIRECTORY_SEPARATOR . $this->basename,
 			self::FILE_MODE
@@ -60,8 +69,11 @@ abstract class File_IO implements API\Interfaces\File_IO
 	 * @param bool   $addNL   Whether or not to append a newline after $content
 	 * @return void
 	 */
-	public function writeFile($content, $addNL = true)
+	public function writeFile($content, $append = true, $addNL = true)
 	{
+		if (!$append) {
+			rewind($this->fileResource);
+		}
 		fwrite($this->fileResource, $content);
 		if ($addNL) {
 			fwrite($this->fileResource, PHP_EOL);
