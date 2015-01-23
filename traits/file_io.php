@@ -29,17 +29,17 @@ namespace shgysk8zer0\Core_API\Traits;
 trait File_IO
 {
 	use Path_Info;
+
 	/**
 	 * Opens the file in the specified mode designating read, write, create
 	 * capabilities. Obtains exclusive lock on file if $lock is true.
 	 *
-	 * @param string $filename Name/path of file to be working with
-	 * @param string $mode     Specifies mode (read, write, create, etc)
-	 * @param bool   $lock     Whether or not to obtain an excludive lock on file
+	 * @param string $filename         Name/path of file to be working with
+	 * @param bool   $use_include_path If you want to search for the file in the include_path
 	 */
-	public function openFile($filename)
+	public function openFile($filename, $use_include_path = false)
 	{
-		$this->getInfo($filename);
+		$this->getPathInfo($filename, $use_include_path);
 	}
 
 	/**
@@ -49,12 +49,12 @@ trait File_IO
 	 * @param bool   $addNL   Whether or not to append a newline after $content
 	 * @return void
 	 */
-	public function writeFile($content, $addNL = true)
+	public function writeFile($content, $append = true, $addNL = true)
 	{
 		file_put_contents(
-		$this->dirname . DIRECTORY_SEPARATOR . $this->basename,
+			$this->absolute_path,
 			($addNL) ? $content . PHP_EOL : $content,
-			FILE_APPEND | LOCK_EX
+			($append) ? FILE_APPEND | LOCK_EX: LOCK_EX
 		);
 	}
 
@@ -66,21 +66,19 @@ trait File_IO
 	 */
 	public function readFile()
 	{
-		return file_get_contents(
-			$this->dirname . DIRECTORY_SEPARATOR . $this->basename
-		);
+		return file_get_contents($this->absolute_path);
 	}
 
 	/**
 	 * Get information about the file
-	 * 
+	 *
 	 * @param string $prop Specific property to retrieve
 	 * @return mixed Array if $prop is null, string or int otherwise
 	 */
 	public function fileInfo($prop = null)
 	{
 		return (is_string($prop))
-			? stat($this->dirname . DIRECTORY_SEPARATOR . $this->basename)[$prop]
-			: stat($this->dirname . DIRECTORY_SEPARATOR . $this->basename);
+			? stat($this->absolute_path)[$prop]
+			: stat($this->absolute_path);
 	}
 }
