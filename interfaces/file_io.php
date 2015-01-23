@@ -33,10 +33,9 @@ interface File_IO
 	 * capabilities. Obtains exclusive lock on file if $lock is true.
 	 *
 	 * @param string $filename Name/path of file to be working with
-	 * @param string $mode     Specifies mode (read, write, create, etc)
-	 * @param bool   $lock     Whether or not to obtain an excludive lock on file
+	 * @param bool   $use_include_path If you want to search for the file in the include_path
 	 */
-	public function openFile($filename);
+	public function openFile($filename, $use_include_path = false);
 
 	/**
 	 * Write $content to file, optionally inserting a trailing newline
@@ -45,7 +44,7 @@ interface File_IO
 	 * @param bool   $addNL   Whether or not to append a newline after $content
 	 * @return void
 	 */
-	public function writeFile($content, $addNL = true);
+	public function writeFile($content, $append = true, $addNL = true);
 
 	/**
 	 * Read the content of the file and return content as string.

@@ -27,15 +27,15 @@ namespace shgysk8zer0\Core_API\Traits;
 trait Errors
 {
 	/**
-	* Throws, catches, and returns an \ErrorException created from error args
-	*
-	* @param int    $level   Any of the error levels (E_*)
-	* @param string $message Message given with the error
-	* @param string $file    File generating the error
-	* @param int    $line    Line on which the error occured
-	* @return \ErrorException
-	* @see http://php.net/manual/en/class.errorexception.php
-	*/
+	 * Throws, catches, and returns an \ErrorException created from error args
+	 *
+	 * @param int    $level   Any of the error levels (E_*)
+	 * @param string $message Message given with the error
+	 * @param string $file    File generating the error
+	 * @param int    $line    Line on which the error occured
+	 * @return \ErrorException
+	 * @see http://php.net/manual/en/class.errorexception.php
+	 */
 	protected static function errorToException(
 		$level,
 		$message,
