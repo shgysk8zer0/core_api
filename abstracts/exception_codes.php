@@ -18,27 +18,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace shgysk8zer0\Core_API\Traits;
+namespace shgysk8zer0\Core_API\Abstracts;
 
 /**
- * Provides a default PSR-3 logger log method.
+ * Defines constants for exception codes.
+ *
+ * @todo Define a pattern of some kind. Perhaps primary numbers or use system
+ * similar to E_* (binary type). Could also use a system similar to HTTP status
+ * codes, where they are defined in groups (500 for server errors, 300 for user)
+ * @todo Method to invert these? Convert the exception code to string?
  */
-trait Default_Log_Method
+abstract class Exception_Codes
 {
-	use Logger_Interpolation;
-	/**
-	 * Logs with an arbitrary level.
-	 *
-	 * @param mixed $level
-	 * @param string $message
-	 * @param array $context
-	 * @return null
-	 */
-	final public function log($level, $message, array $context = array())
-	{
-		if(! defined("\\shgysk8zer0\\Core_API\\Abstracts\\LogLevel::" . strtoupper($level))) {
-			throw new \InvalidArgumentException("Undefined log level: {$level}");
-		}
-		echo $this->interpolate($message, $context) . PHP_EOL;
-	}
+	const UNDEFINED = 0;
+	const INVALID_ARGS = 1;
+	const NOT_FOUND = 2;
+	const MISSING_USER_INPUT = 3;
+	const UNAUHORIZED = 4;
+	const DEPRECIATD = 5;
 }

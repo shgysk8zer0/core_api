@@ -21,24 +21,32 @@
 namespace shgysk8zer0\Core_API\Traits;
 
 /**
- * Provides a default PSR-3 logger log method.
+ * For use with PSR loggers. Provides a default method for combining $message
+ * and $context.
  */
-trait Default_Log_Method
+trait Logger_Interpolation
 {
-	use Logger_Interpolation;
 	/**
-	 * Logs with an arbitrary level.
+	 * This is the default method for interpolating in PSR-3 loggers
 	 *
-	 * @param mixed $level
-	 * @param string $message
-	 * @param array $context
-	 * @return null
+	 * @param  string $message The template given
+	 * @param  array  $context An array of values to assign to templatte
+	 * @return string
 	 */
-	final public function log($level, $message, array $context = array())
+	final public function interpolate($message, array $context = array())
 	{
-		if(! defined("\\shgysk8zer0\\Core_API\\Abstracts\\LogLevel::" . strtoupper($level))) {
-			throw new \InvalidArgumentException("Undefined log level: {$level}");
-		}
-		echo $this->interpolate($message, $context) . PHP_EOL;
+		return strtr(
+			$message,
+			array_combine(
+				array_map(
+					function($key)
+					{
+						return "{{$key}}";
+					},
+					array_keys($context)
+				),
+				array_values($context)
+			)
+		);
 	}
 }
