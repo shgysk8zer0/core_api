@@ -65,7 +65,7 @@ trait URL
 			$url = get_object_vars($url);
 		} elseif (!is_array($url)) {
 			// For all other casses (namely null), use the caclulated URL
-			$url = $current_url;
+			$url = [];
 		}
 
 		if (is_array($url)) {
