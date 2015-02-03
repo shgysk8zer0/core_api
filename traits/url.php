@@ -39,25 +39,37 @@ trait URL
 	final protected function parseURL($url = null)
 	{
 		$current_url = [
-			'scheme' => $_SERVER['REQUEST_SCHEME'],
-			'host' => $_SERVER['HTTP_HOST'],
+			'scheme' => array_key_exists('REQUEST_SCHEME', $_SERVER)
+				? $_SERVER['REQUEST_SCHEME']
+				: 'http',
+			'host' => array_key_exists('HTTP_HOST', $_SERVER)
+				? $_SERVER['HTTP_HOST']
+				: 'localhost',
 			'port' => null,
 			'user' => null,
 			'pass' => null,
-			'path' => $_SERVER['REQUEST_URI'],
-			'query' => $_SERVER['QUERY_STRING'],
+			'path' => array_key_exists('REQUEST_URI', $_SERVER)
+				? $_SERVER['REQUEST_URI']
+				: '/',
+			'query' => array_key_exists('QUERY_STRING', $_SERVER)
+				? $_SERVER['QUERY_STRING']
+				: '',
 			'fragment' => null
 		];
+
 		if (is_string($url)) {
+			// If $url is a string, we can just use parse_url
 			$url = parse_url($url);
 		} elseif (is_object($url)) {
+			// If it is an object, we must convert it into an array
 			$url = get_object_vars($url);
 		} elseif (!is_array($url)) {
+			// For all other casses (namely null), use the caclulated URL
 			$url = $current_url;
 		}
 
-
 		if (is_array($url)) {
+			// Use array_merge to fill in missing components of $url
 			$this->url_data = array_merge($current_url, $url);
 		}
 		return $this;
