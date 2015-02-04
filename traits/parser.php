@@ -38,9 +38,9 @@ trait Parser
 	 * @param  string $file The name of file to parse.
 	 * @return mixed        The parsed data from file contents
 	 */
-	public function parse($file)
+	public function parse($file, $use_include_path = true)
 	{
-		$this->openFile($file);
+		$this->openFile($file, $use_include_path);
 
 		switch (strtolower($this->extension)) {
 			case 'json':
