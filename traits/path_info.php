@@ -25,6 +25,9 @@ namespace shgysk8zer0\Core_API\Traits;
  * as extension and basename (file name + extension). Set protected class
  * variables for each.
  *
+ * Also provides individual methods for retrieving each individual component
+ * from a path without settings class variables in the process.
+ *
  * @see http://php.net/manual/en/function.pathinfo.php
  */
 trait Path_Info
@@ -91,5 +94,49 @@ trait Path_Info
 
 			$this->absolute_path = $this->dirname . DIRECTORY_SEPARATOR . $this->basename;
 		}
+	}
+
+	/**
+	 * Returns the extension for the path
+	 *
+	 * @param string $path Absolute or relative path
+	 * @return string      The final extension, without the "."
+	 */
+	final protected function pathExtension($path)
+	{
+		return pathinfo($path, PATHINFO_EXTENSION);
+	}
+
+	/**
+	 * Returns the directory portion of the path
+	 *
+	 * @param string  $path Absolute or relative path
+	 * @return string The directory portion of the path
+	 */
+	final protected function pathDirname($path)
+	{
+		return pathinfo($path, PATHINFO_DIRNAME);
+	}
+
+	/**
+	 * Returns the filename of the path
+	 *
+	 * @param string $path Absolute or relative path
+	 * @return sting       Path without directory or final extension
+	 */
+	final protected function pathFilename($path)
+	{
+		return pathinfo($path, PATHINFO_FILENAME);
+	}
+
+	/**
+	 * Returns the basename of the path
+	 *
+	 * @param string $path Absolute or relative path
+	 * @return             Path without directory, but with extension.
+	 */
+	final protected function pathBasename($path)
+	{
+		return pathinfo($path, PATHINFO_BASENAME);
 	}
 }
