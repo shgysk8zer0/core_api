@@ -6,4 +6,5 @@
 .buildpath
 .project
 .settings/
-tests/
+/index.php
+#tests/
