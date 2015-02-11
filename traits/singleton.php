@@ -45,7 +45,11 @@ trait Singleton
 	{
 		if (is_string($arg) or is_null($arg)) {
 			if (! array_key_exists($arg, static::$instances)) {
-				static::$instances[$arg] = new self($arg);
+				if (is_null($arg)) {
+					static::$instances[$arg] = new self;
+				} else {
+					static::$instances[$arg] =new self($arg);
+				}
 			}
 
 			return static::$instances[$arg];
