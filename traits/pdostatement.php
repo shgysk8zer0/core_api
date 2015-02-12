@@ -30,9 +30,12 @@ trait PDOStatement
 	 */
 	final public function bind(array $params = array())
 	{
-		foreach ($params as $key => $value) {
-			$this->bindParam(":$key", $value);
-		}
+		$params = $this->bindConversion($params);
+		array_map(
+			[$this, 'bindParam'],
+			array_keys($params),
+			array_values($params)
+		);
 
 		return $this;
 	}
@@ -48,13 +51,7 @@ trait PDOStatement
 		if (! is_array($bound_input_params) or empty($bound_input_params)) {
 			parent::execute();
 		} else {
-			parent::execute(array_combine(
-				array_map(function($key)
-				{
-					return ":{$key}";
-				}, array_keys($bound_input_params)),
-				array_values($bound_input_params)
-			));
+			parent::execute($this->bindConversion($bound_input_params));
 		}
 
 		return $this;
@@ -74,5 +71,30 @@ trait PDOStatement
 		} else {
 			return $this->fetchAll($fetch_style);
 		}
+	}
+
+	/**
+	 * Prefixes paramaters for binding to prepared statements
+	 *
+	 * @param string $key Array key for $bound_input_params
+	 * @return string     $key, prefixed with ':'
+	 */
+	final protected function bindKey($key)
+	{
+		return ":{$key}";
+	}
+
+	/**
+	 * Converts an array into one compatible with bind() & execute()
+	 *
+	 * @param array $bound_input_params [$key => $value]
+	 * @return array                    [:$key => $value]
+	 */
+	final protected function bindConversion(array $bound_input_params = array())
+	{
+		return array_combine(
+			array_map([$this, 'bindKey'], array_keys($bound_input_params)),
+			array_values($bound_input_params)
+		);
 	}
 }
