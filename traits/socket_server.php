@@ -26,9 +26,13 @@ namespace shgysk8zer0\Core_API\Traits;
  *
  * @see http://php.net/manual/en/book.sockets.php
  */
-trait Socket_Server
+trait socket
 {
-	public $socket_server;
+	/**
+	 * Variable containing Socket Server resource
+	 * @var resource
+	 */
+	public $socket;
 
 	/**
 	 * Create a socket (endpoint for communication)
@@ -46,7 +50,7 @@ trait Socket_Server
 		$protocol = SOL_TCP
 	)
 	{
-		$this->socket_server = socket_create($domain, $type, $protocol);
+		$this->socket = socket_create($domain, $type, $protocol);
 		return $this;
 	}
 
@@ -64,7 +68,18 @@ trait Socket_Server
 	 */
 	final public function socketBind($address, $port = 0)
 	{
-		return socket_bind($this->socket_server, "{$address}", (int)$port);
+		return socket_bind($this->socket, "{$address}", (int)$port);
+	}
+
+	/**
+	 * Shuts down a socket for receiving, sending, or both
+	 *
+	 * @param int $how {0:reading, 1: writing, 2: both}
+	 * @return bool    TRUE on success or FALSE on failure
+	 */
+	final public function socketShutdown($how = 2)
+	{
+		return socket_shutdown($this->socket, $how);
 	}
 
 	/**
@@ -78,7 +93,7 @@ trait Socket_Server
 	 */
 	final public function socketListen($backlog = 0)
 	{
-		return socket_listen($this->socket_server);
+		return socket_listen($this->socket);
 	}
 
 	/**
@@ -92,6 +107,69 @@ trait Socket_Server
 	 */
 	final public function socketRead($length = 2048, $type = PHP_NORMAL_READ)
 	{
-		return socket_read($this->socket_server, $length, $type);
+		return socket_read($this->socket, $length, $type);
+	}
+
+	/**
+	 * Receives data from a connected socket
+	 *
+	 * @param string $buff  Data received will be fetched to the variable
+	 * @param int    $len   Up to len bytes will be fetched from remote host
+	 * @param int    $flags MSG_(OOB|PEEK|WAITALL|DONTWAIT) joined with the binary OR (|) operator
+	 */
+	final public function socketRecv(&$buff, $len, $flags)
+	{
+		return socket_recv($this->socket, $buff, $len, $flags);
+	}
+
+	/**
+	 * Receives data from a socket whether or not it is connection-oriented
+	 *
+	 * @param string $buff  The data received
+	 * @param int    $len   Up to len bytes will be fetched from remote host
+	 * @param int    $flags MSG_(OOB|PEEK|WAITALL|DONTWAIT) joined with the binary OR (|) operator
+	 * @param string $name  Path for AF_UNIX, IP address, or null for connection-oriented
+	 * @param int    $port  [description]
+	 */
+	final public function socketRecvfrom(&$buff, $len, $flags, &$name, &$port = null)
+	{
+		return socket_recvfrom($this->socket, $buff, $len, $flags, $name, $port);
+	}
+
+	/**
+	 * Returns the last error on the socket
+	 *
+	 * @param void
+	 * @return int   A socket error code
+	 */
+	final public function socketLastError()
+	{
+		return socket_last_error($this->socket);
+	}
+
+	/**
+	 * Return a string describing a socket error
+	 *
+	 * @param int $errno A valid socket error number, likely produced by socket_last_error()
+	 * @return string    The error message associated with the errno parameter
+	 */
+	final public function socketStrerror($errno = null)
+	{
+		if (! is_int($errno)) {
+			$errno = $this->socketLastError();
+		}
+
+		return socket_strerror($errno);
+	}
+
+	/**
+	 * Clears the error on the socket or the last error code
+	 *
+	 * @param void
+	 * @return void
+	 */
+	final public function socketClearError()
+	{
+		socket_clear_error($this->socket);
 	}
 }
