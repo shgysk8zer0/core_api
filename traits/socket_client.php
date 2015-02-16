@@ -23,25 +23,42 @@ namespace shgysk8zer0\Core_API\Traits;
 /**
  * This trait converts Socket functions into OOP.
  * It uses socket* (camelCase) method names instead of socket_* functions.
+ * @see http://php.net/manual/en/book.sockets.php
  */
-trait Socket_Client
+trait socket
 {
-	protected $socket_client;
+	/**
+	 * Variable containing Socket Client resource
+	 * @var resource
+	 */
+	protected $socket;
 
 	/**
 	 * Creates a client side sockets from a server side one
 	 *
 	 * @param resource $socket Socket created through socket_create
-	 * @return self
+	 * @return resource
 	 */
 	final public function socketAccept($socket = null)
 	{
-		if (gettype($socket) === 'resource') {
-			$this->socket_client = socket_accept($socket);
+		if (is_resource($socket)) {
+			$this->socket = socket_accept($socket);
+			return $this->socket;
 		} else {
 			throw new InvalidArgumentException(__METHOD__ . ' expects $socket to be an instance of resource. ' . gettype($resource) . ' given instead');
 		}
-		return $this;
+	}
+
+	/**
+	 * Reads a maximum of length bytes from a socket
+	 *
+	 * @param int $length The maximum number of bytes read
+	 * @param int $type   PHP_BINARY_READ | PHP_NORMAL_READ
+	 * @return string
+	 */
+	final public function socketRead($length, $type = PHP_BINARY_READ)
+	{
+		return socket_read($this->socket, $length, $type);
 	}
 
 	/**
@@ -49,14 +66,28 @@ trait Socket_Client
 	 *
 	 * @param string $message The message to send
 	 * @param int    $length  Optional lenght (defaults to length of $message)
-	 * @return self
+	 * @return int            The number of bytes successfully written to the socket or FALSE on failure
 	 */
 	final public function socketWrite($message = '', $length = null)
 	{
-		if (!is_int($length)) {
-			$length = strlen($message);
-		}
-		socket_write($this->socket_client, "{$message}", $length);
-		return $this;
+		return @socket_write(
+			$this->socket,
+			"{$message}",
+			is_int($length) ? $length : strlen($message)
+		);
+	}
+
+	/**
+	 * Queries the local side of the given socket which may either result in
+	 * host/port or in a Unix filesystem path, dependent on its type
+	 *
+	 * @param resource $socket  A valid socket resource created with socket_create() or socket_accept()
+	 * @param string   $addr    Varies with socket type.
+	 * @param int      $port   If provided, this will hold the associated port.
+	 * @return bool
+	 */
+	final public function socketGetSockName($socket, &$addr, &$port = null)
+	{
+		return @socket_getsockname($socket, $addr, $port);
 	}
 }
