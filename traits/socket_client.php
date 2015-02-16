@@ -25,7 +25,7 @@ namespace shgysk8zer0\Core_API\Traits;
  * It uses socket* (camelCase) method names instead of socket_* functions.
  * @see http://php.net/manual/en/book.sockets.php
  */
-trait socket
+trait Socket_Client
 {
 	/**
 	 * Variable containing Socket Client resource

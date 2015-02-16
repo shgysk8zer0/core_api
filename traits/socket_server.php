@@ -26,7 +26,7 @@ namespace shgysk8zer0\Core_API\Traits;
  *
  * @see http://php.net/manual/en/book.sockets.php
  */
-trait socket
+trait Socket_Server
 {
 	/**
 	 * Variable containing Socket Server resource
