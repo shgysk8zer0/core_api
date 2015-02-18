@@ -102,7 +102,7 @@ trait Path_Info
 	 * @param string $path Absolute or relative path
 	 * @return string      The final extension, without the "."
 	 */
-	final protected function pathExtension($path)
+	final protected function pathExtension($path = self::absolute_path)
 	{
 		return pathinfo($path, PATHINFO_EXTENSION);
 	}
@@ -113,7 +113,7 @@ trait Path_Info
 	 * @param string  $path Absolute or relative path
 	 * @return string The directory portion of the path
 	 */
-	final protected function pathDirname($path)
+	final protected function pathDirname($path = self::absolute_path)
 	{
 		return pathinfo($path, PATHINFO_DIRNAME);
 	}
@@ -124,7 +124,7 @@ trait Path_Info
 	 * @param string $path Absolute or relative path
 	 * @return sting       Path without directory or final extension
 	 */
-	final protected function pathFilename($path)
+	final protected function pathFilename($path = self::absolute_path)
 	{
 		return pathinfo($path, PATHINFO_FILENAME);
 	}
@@ -135,7 +135,7 @@ trait Path_Info
 	 * @param string $path Absolute or relative path
 	 * @return             Path without directory, but with extension.
 	 */
-	final protected function pathBasename($path)
+	final protected function pathBasename($path = self::absolute_path)
 	{
 		return pathinfo($path, PATHINFO_BASENAME);
 	}
