@@ -27,7 +27,7 @@ trait PDO
 {
 	/**
 	 * Method to create database connections and parse $con is still required.
-	 * If extending Abstraacts\PDO_Connect, this is already provided
+	 * If extending Abstracts\PDO_Connect, this is already provided
 	 *
 	 * @param  mixed  $con      string(filename), object, or array containing credentials
 	 * @param  array  $options  A key=>value array of driver-specific connection options.
@@ -54,7 +54,9 @@ trait PDO
 	 */
 	final public function showTables()
 	{
-		return $this('SHOW TABLES', self::FETCH_COLUMN);
+		$q = $this->query('SHOW TABLES');
+		$q->execute();
+		return $q->fetchAll(self::FETCH_COLUMN);
 	}
 
 	/**
@@ -65,23 +67,30 @@ trait PDO
 	 */
 	final public function describe($table)
 	{
-		return $this("DESCRIBE `{$table}`");
+		$q = $this->query("DESCRIBE `{$table}`");
+		$q->execute();
+		return $q->fetchAll(self::FETCH_COLUMN);
 	}
 
 	/**
 	 * Lazy/magic method for PDO::query(). Combines all steps in into one.
 	 *
 	 * @param  string $query       The query string
+	 * @param  int    $n           Optional row to return
 	 * @param  int $fetch_style    From PDO constants
 	 * @return array               [key => \stdClass]
 	 * @example $PDO($query, \PDO::FETCH_CLASS);
 	 * @example $PDO("SELECT * FROM `table`");
 	 */
-	final public function __invoke($query, $fetch_style = self::FETCH_CLASS)
+	final public function __invoke($query, $n = null, $fetch_style = self::FETCH_CLASS)
 	{
-		return $this
-			->query($query)
-			->execute()
-			->fetchAll($fetch_style);
+		$q = $this->query($query);
+		$q->execute();
+		$results = $q->fetchAll($fetch_style);
+		if (is_array($results)) {
+			return is_int($n) ? $results[$n] : $results;
+		} else {
+			return [];
+		}
 	}
 }
