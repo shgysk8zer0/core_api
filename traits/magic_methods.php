@@ -39,9 +39,13 @@ trait Magic_Methods
 	 */
 	final public function __get($prop)
 	{
-		return (is_array($this->{$this::MAGIC_PROPERTY}))
-			? $this->{$this::MAGIC_PROPERTY}[$prop]
-			: $this->{$this::MAGIC_PROPERTY}->$prop;
+		if ($this->__isset($prop)) {
+			return (is_array($this->{$this::MAGIC_PROPERTY}))
+				? $this->{$this::MAGIC_PROPERTY}[$prop]
+				: $this->{$this::MAGIC_PROPERTY}->$prop;
+		} else {
+			return null;
+		}
 	}
 
 	/**
