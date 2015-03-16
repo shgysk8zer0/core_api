@@ -27,6 +27,14 @@ namespace shgysk8zer0\Core_API\Traits;
 trait AJAX_DOM
 {
 	/**
+	 * Called when class is used as a string (e.g. echo)
+	 *
+	 * @param void
+	 * @return string
+	 */
+	abstract function __toString();
+
+	/**
 	 * Array to store data in
 	 * @var array
 	 */
@@ -714,16 +722,4 @@ trait AJAX_DOM
 			return print_r($this, true);
 		}
 	}
-
-	/**
-	 * Sends everything with content-type of application/json,
-	 * Exits with json_encode($this->response)
-	 * An optional $key argument can be used to only
-	 * send a subset of $this->response
-	 *
-	 * @param $key
-	 * @return self
-	 * @example $resp->send() or $resp->send('notify')
-	 */
-	abstract public function send($key = null);
 }

@@ -26,6 +26,13 @@ namespace shgysk8zer0\Core_API\Interfaces;
  */
 Interface AJAX_DOM
 {
+	/**
+	 * Called when class is used as a string (e.g. echo)
+	 *
+	 * @param void
+	 * @return string
+	 */
+	public function __toString();
 
 	/**
 	 * Sets textContent of elements matching $selector to $content
@@ -447,16 +454,4 @@ Interface AJAX_DOM
 	 * @example $resp->debug((true|false)?);
 	 */
 	public function debug($format = false);
-
-	/**
-	 * Sends everything with content-type of application/json,
-	 * Exits with json_encode($this->response)
-	 * An optional $key argument can be used to only
-	 * send a subset of $this->response
-	 *
-	 * @param $key
-	 * @return self
-	 * @example $resp->send() or $resp->send('notify')
-	 */
-	public function send($key = null);
 }
