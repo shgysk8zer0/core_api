@@ -18,13 +18,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace shgysk8zer0\Core_API\Traits;
-
-/**
- * Provides a default implementation of the __call magic method.
- * @deprecated
- */
-trait Magic_Call
+namespace shgysk8zer0\Core_API\Traits\Magic;
+trait Un_Set
 {
-	use Magic\Call;
+	/**
+	 * Magic unset method.
+	 *
+	 * @param string $prop The property to work with
+	 * @return void
+	 * @example unset($magic_class->$prop);
+	 */
+	final public function __unset($prop)
+	{
+		unset($this->{$this::MAGIC_PROPERTY}->$prop);
+	}
 }

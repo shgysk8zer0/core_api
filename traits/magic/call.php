@@ -18,13 +18,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace shgysk8zer0\Core_API\Traits;
+namespace shgysk8zer0\Core_API\Traits\Magic;
 
 /**
  * Provides a default implementation of the __call magic method.
- * @deprecated
  */
-trait Magic_Call
+trait Call
 {
-	use Magic\Call;
+	/**
+	 * Chained magic getter and setter (and isset via has)
+	 *
+	 * @param string $name      Name of the method called
+	 * @param array $arguments  Array of arguments passed to the method
+	 * @return mixed
+	 * @example "$class->[getName|setName|hasName|$name]($arguments[0], ...)"
+	 * @method get*
+	 * @method set*
+	 * @method has*
+	 */
+	final public function __call($name, array $arguments = array())
+	{
+		$name = strtolower($name);
+		$act = substr($name, 0, 3);
+		$key = substr($name, 3);
+		switch($act) {
+			case 'get':
+				return $this->__get($key);
+			case 'set':
+				$this->__set($key, current($arguments));
+				return $this;
+			case 'has':
+				return $this->__isset($key);
+		}
+	}
 }
