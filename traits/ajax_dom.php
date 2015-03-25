@@ -65,11 +65,11 @@ trait AJAX_DOM
 	final public function notify($title = null, $body = null, $icon = null)
 	{
 		$this->response['notify'] = [];
-		if (isset($title)) {
+		if (is_string($title)) {
 			$this->response['notify']['title'] = (string)$title;
 		}
 
-		if (isset($body)) {
+		if (is_string($body)) {
 			$this->response['notify']['body'] = (string)$body;
 		}
 
@@ -88,7 +88,7 @@ trait AJAX_DOM
 	 */
 	final public function html($selector = null, $content = null)
 	{
-		if (!array_key_exists('html', $this->response)) {
+		if (! array_key_exists('html', $this->response)) {
 			$this->response['html'] = [];
 		}
 
@@ -104,7 +104,7 @@ trait AJAX_DOM
 	 */
 	final public function append($selector = null, $content = null)
 	{
-		if (!array_key_exists('append', $this->response)) {
+		if (! array_key_exists('append', $this->response)) {
 			$this->response['append'] = [];
 		}
 
@@ -121,7 +121,7 @@ trait AJAX_DOM
 	 */
 	final public function prepend($selector = null, $content = null)
 	{
-		if (!array_key_exists('prepend', $this->response)) {
+		if (! array_key_exists('prepend', $this->response)) {
 			$this->response['prepend'] = [];
 		}
 
@@ -137,7 +137,7 @@ trait AJAX_DOM
 	 */
 	final public function before($selector = null, $content = null)
 	{
-		if (!array_key_exists('before', $this->response)) {
+		if (! array_key_exists('before', $this->response)) {
 			$this->response['before'] = [];
 		}
 
@@ -312,9 +312,7 @@ trait AJAX_DOM
 	 */
 	final public function log()
 	{
-		$args = func_get_args();
-		$this->response['log'] = (count($args) == 1) ? $args[0] : $args;
-		return $this;
+		return $this->consoleSetter(__FUNCTION__, func_get_args());
 	}
 
 	/**
@@ -339,9 +337,7 @@ trait AJAX_DOM
 	 */
 	final public function dir()
 	{
-		$args = func_get_args();
-		$this->response['dir'] = (count($args) == 1) ? $args[0] : $args;
-		return $this;
+		return $this->consoleSetter(__FUNCTION__, func_get_args());
 	}
 
 	/**
@@ -353,9 +349,7 @@ trait AJAX_DOM
 	 */
 	final public function info()
 	{
-		$args = func_get_args();
-		$this->response['info'] = (count($args) == 1) ? $args[0] : $args;
-		return $this;
+		return $this->consoleSetter(__FUNCTION__, func_get_args());
 	}
 
 	/**
@@ -367,9 +361,7 @@ trait AJAX_DOM
 	 */
 	final public function warn()
 	{
-		$args = func_get_args();
-		$this->response['warn'] = (count($args) == 1) ? $args[0] : $args;
-		return $this;
+		return $this->consoleSetter(__FUNCTION__, func_get_args());
 	}
 
 	/**
@@ -381,9 +373,7 @@ trait AJAX_DOM
 	 */
 	final public function error()
 	{
-		$args = func_get_args();
-		$this->response['error'] = (count($args) == 1) ? $args[0] : $args;
-		return $this;
+		return $this->consoleSetter(__FUNCTION__, func_get_args());
 	}
 
 	/**
@@ -479,46 +469,36 @@ trait AJAX_DOM
 	}
 
 	/**
-	 * Creates a popup window via JavaScript's window.open()
+	 * Open a popup using JavaScript
 	 *
-	 * @see http://www.w3schools.com/jsref/met_win_open.asp
-	 * @param string $url
-	 * @param array $paramaters,
-	 * @param boolean $replace
+	 * @param  string $url        Specifies the URL of the page to open
+	 * @param  array  $paramaters See comments on $specs
+	 * @param  bool $replace      Creates a new entry or replaces the current entry in the history list
+	 * @param  string $name       Specifies the target attribute or the name of the window
 	 * @return self
-	 * @example $resp->open(
-	 * 	'http://example.com',
-	 * 	[
-	 * 		'height' => 500,
-	 * 		'width' => 500
-	 * 	],
-	 * 	false
-	 * )
+	 * @see http://www.w3schools.com/jsref/met_win_open.asp
+	 * @example $resp->open('example.com', ['width' => 900], false, '_top')
 	 */
 	final public function open(
 		$url = null,
-		array $paramaters = null,
+		array $paramaters = array(),
 		$replace = false,
 		$name = '_blank'
 	)
 	{
 		$specs = [
-			'height' => 500,
-			'width' => 500,
-			'top' => 0,
-			'left' => 0,
-			'resizable' => 1,
-			'titlebar' => 0,
-			'menubar' => 0,
-			'toolbar' => 0,
-			'status' => 0
+			'height'    => 500, // The height of the window. Min. value is 100
+			'width'     => 500, // The width of the window. Min. value is 100
+			'top'       => 0,   // The top position of the window.
+			'left'      => 0,   // The left position of the window.
+			'resizable' => 1,   // Whether or not the window is resizable. IE only
+			'titlebar'  => 0,   // Whether or not to display the title bar
+			'menubar'   => 0,   // Whether or not to display the menu bar
+			'toolbar'   => 0,   // Whether or not to display the browser toolbar. IE and Firefox only
+			'status'    => 0    // Whether or not to add a status bar
 		];
 
-		if (is_array($paramaters)) {
-			foreach($paramaters as $key => $value) {
-				$specs[$key] = (string)$value;
-			}
-		}
+		$specs = array_merge($specs, $paramaters);
 
 		$this->response['open'] = [
 			'url' => $url,
@@ -721,5 +701,31 @@ trait AJAX_DOM
 		} else {
 			return print_r($this, true);
 		}
+	}
+
+	/**
+	 * Private method for setting console values which can contain one or more
+	 * values. I.E., log could take a singe argument and then be called again
+	 * later. For console methods, set here to make it easier to call multiple
+	 * times.
+	 *
+	 * @param string $method Console method to be setting
+	 * @param array  $value  Value to be setting or appending.
+	 * @return self
+	 */
+	final protected function consoleSetter(
+		$method = 'log',
+		array $value = array()
+	)
+	{
+		if (array_key_exists($method, $this->response)) {
+			if (! is_array($this->response[$method])) {
+				$this->response[$method] = [$this->response[$method]];
+			}
+			$this->response[$method][] = count($value) === 1 ? current($value) : $value;
+		} else {
+			$this->response[$method] = count($value) == 1 ? current($value) : $value;
+		}
+		return $this;
 	}
 }
