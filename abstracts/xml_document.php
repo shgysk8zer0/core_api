@@ -65,6 +65,7 @@ class XML_Document extends \DOMDocument implements \shgysk8zer0\Core_API\Interfa
 	 *
 	 * @param string $tag     Tag name for new element to be appended to root
 	 * @param mixed $content  Anything $this::append can handle for $content
+	 * @example $this->$tag = $content
 	 */
 	public function __set($tag, $content)
 	{
