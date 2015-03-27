@@ -26,10 +26,9 @@ use \DOMElement as Element;
 /**
  * Extend \DOMDocument to make easier to use and add new features
  * @see http://php.net/manual/en/class.domdocument.php
- * @todo Make class abstract
- * @todo Figure out how to set attributes on nodes when created
  */
-class XML_Document extends \DOMDocument implements \shgysk8zer0\Core_API\Interfaces\Magic_Methods
+abstract class XML_Document extends \DOMDocument
+implements \shgysk8zer0\Core_API\Interfaces\Magic_Methods
 {
 	const VERSION = '1.0';
 	const ENCODING = 'UTF-8';
