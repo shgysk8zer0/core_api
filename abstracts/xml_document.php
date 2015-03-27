@@ -3,8 +3,8 @@
  * @author Chris Zuber
  * @package shgysk8zer0\Core
  * @version 1.0.0
- * @link http://php.net/manual/en/class.domdocument.php
- * @copyright 2014, Chris Zuber
+ * @since 1.0.0
+ * @copyright 2015, Chris Zuber
  * @license http://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,15 +33,9 @@ class XML_Document extends \DOMDocument implements \shgysk8zer0\Core_API\Interfa
 {
 	const VERSION = '1.0';
 	const ENCODING = 'UTF-8';
-	const ROOT_EL = 'xml';
+	const ROOT_EL = 'root';
 	const FALSE = 0;
 	const TRUE = 1;
-
-	/**
-	 * Charset to use for document
-	 * @var string
-	 */
-	protected $charset = '';
 
 	/**
 	 * The root element of the document
@@ -63,7 +57,6 @@ class XML_Document extends \DOMDocument implements \shgysk8zer0\Core_API\Interfa
 	)
 	{
 		parent::__construct($version, $encoding);
-		$this->charset = $encoding;
 		$this->root = $this->appendChild(new Element($root));
 	}
 
@@ -169,6 +162,7 @@ class XML_Document extends \DOMDocument implements \shgysk8zer0\Core_API\Interfa
 
 	/**
 	 * Append any supported $content to $parent
+	 *
 	 * @param  DOMNode $parent  Node to append to
 	 * @param  mixed   $content Content to append
 	 * @return self
