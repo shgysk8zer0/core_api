@@ -167,8 +167,11 @@ class XML_Document extends \DOMDocument implements \shgysk8zer0\Core_API\Interfa
 	 * @param  mixed   $content Content to append
 	 * @return self
 	 */
-	protected function append(\DOMNode &$parent, $content = null)
+	protected function append(\DOMNode &$parent = null, $content = null)
 	{
+		if (is_null($parent)) {
+			$parent = $this->root;
+		}
 		if (
 			is_string($content)
 			or is_numeric($content)
@@ -187,14 +190,18 @@ class XML_Document extends \DOMDocument implements \shgysk8zer0\Core_API\Interfa
 			array_map(
 				function($node, $value) use (&$parent){
 					if (is_string($node)) {
-						$node = $parent->appendChild(new Element($node));
-						if (is_string($value)) {
-							$this->append(
-								$node,
-								$this->createTextNode($value)
-							);
+						if (substr($node, 0, 1) === '@') {
+							$parent->setAttribute(substr($node, 1), $value);
 						} else {
-							$this->append($node, $value);
+							$node = $parent->appendChild(new Element($node));
+							if (is_string($value)) {
+								$this->append(
+									$node,
+									$this->createTextNode($value)
+								);
+							} else {
+								$this->append($node, $value);
+							}
 						}
 					} else {
 						$this->append($parent, $value);
@@ -220,9 +227,12 @@ class XML_Document extends \DOMDocument implements \shgysk8zer0\Core_API\Interfa
 	 * @param DOMNode $node  Node to set attributes on
 	 * @param array   $attrs $key => $value array of attributes to set
 	 */
-	protected function setAttributes(\DOMNode $node, array $attrs = array())
+	protected function setAttributes(\DOMNode &$node, array $attrs = array())
 	{
 		$attrs = array_filter('is_string', $attrs);
+		if (! is_array($attrs) or empty($attrs)) {
+			return;
+		}
 		array_map(
 			[$node, 'setAttribute'],
 			array_keys($attrs),
