@@ -161,6 +161,17 @@ implements \shgysk8zer0\Core_API\Interfaces\Magic_Methods
 	}
 
 	/**
+	 * Magic method called by `var_dump()` [PHP >= 5.6 only]
+	 *
+	 * @param void
+	 * @return SimpleXML
+	 */
+	public function  __debugInfo()
+	{
+		return simplexml_load_string($this);
+	}
+
+	/**
 	 * Append any supported $content to $parent
 	 *
 	 * @param  DOMNode $parent  Node to append to
