@@ -180,7 +180,10 @@ class XML_Document extends \DOMDocument implements \shgysk8zer0\Core_API\Interfa
 			and is_subclass_of($content, '\DOMNode')
 		) {
 			$parent->appendChild($content);
-		} elseif (is_array($content)) {
+		} elseif (
+			is_array($content)
+			or (is_object($content) and $content = get_object_vars($content))
+		) {
 			array_map(
 				function($node, $value) use (&$parent){
 					if (is_string($node)) {
