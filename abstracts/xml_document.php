@@ -21,8 +21,6 @@
 */
 namespace shgysk8zer0\Core_API\Abstracts;
 
-use \DOMElement as Element;
-
 /**
  * Extend \DOMDocument to make easier to use and add new features
  * @see http://php.net/manual/en/class.domdocument.php
@@ -50,13 +48,25 @@ implements \shgysk8zer0\Core_API\Interfaces\Magic_Methods
 	 * @param string  $root     The tag name of $root
 	 */
 	public function __construct(
-		$version  = self::VERSION,
-		$encoding = self::ENCODING,
-		$root     = self::ROOT_EL
+		$version     = self::VERSION,
+		$encoding    = self::ENCODING,
+		$root        = self::ROOT_EL,
+		$xmlns       = null,
+		array $attrs = array()
 	)
 	{
 		parent::__construct($version, $encoding);
-		$this->root = $this->appendChild(new Element($root));
+		if (filter_var($xmlns, FILTER_VALIDATE_URL)) {
+			$this->root = $this->appendChild(
+				$this->createElementNS($xmlns, $root)
+			);
+		} else {
+			$this->root = $this->appendChild($this->createElement($root));
+		}
+
+		foreach ($attrs as $prop => $value) {
+			$this->root->setAttribute($prop, $value);
+		}
 	}
 
 	/**
@@ -68,7 +78,7 @@ implements \shgysk8zer0\Core_API\Interfaces\Magic_Methods
 	 */
 	public function __set($tag, $content)
 	{
-		$tag = $this->root->appendChild(new Element($tag));
+		$tag = $this->root->appendChild($this->createElement($tag));
 		$this->append($tag, $content);
 	}
 
@@ -102,7 +112,7 @@ implements \shgysk8zer0\Core_API\Interfaces\Magic_Methods
 	public function __call($tag, array $content = array())
 	{
 		return $this->append(
-			$this->root->appendChild(new Element($tag)),
+			@$this->root->appendChild($this->createElement($tag)),
 			$content
 		);
 	}
@@ -204,7 +214,7 @@ implements \shgysk8zer0\Core_API\Interfaces\Magic_Methods
 						if (substr($node, 0, 1) === '@') {
 							$parent->setAttribute(substr($node, 1), $value);
 						} else {
-							$node = $parent->appendChild(new Element($node));
+							$node = $parent->appendChild($this->createElement($node));
 							if (is_string($value)) {
 								$this->append(
 									$node,
