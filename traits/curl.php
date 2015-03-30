@@ -117,7 +117,7 @@ trait cURL
 	 * @param array $options An array specifying which options to set and their values.
 	 * @return self
 	 */
-	final public function curlSetOptArry(array $options = array())
+	final public function curlSetOptArray(array $options = array())
 	{
 		curl_setopt_array($this->curl_handle, $options);
 		return $this;
