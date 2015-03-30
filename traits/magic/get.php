@@ -31,6 +31,7 @@ trait Get
 	 */
 	final public function __get($prop)
 	{
+		$this->magicPropConvert($prop);
 		if ($this->__isset($prop)) {
 			return (is_array($this->{$this::MAGIC_PROPERTY}))
 				? $this->{$this::MAGIC_PROPERTY}[$prop]

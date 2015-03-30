@@ -33,4 +33,15 @@ trait Magic_Methods
 	use Magic\Set;
 	use Magic\Is_Set;
 	use Magic\Un_Set;
+
+	/**
+	 * Single protected method for keeping MAGIC_PROPERTY keys consistent
+	 *
+	 * @param string $prop A pointer to the property
+	 * @return void
+	 */
+	protected function magicPropConvert(&$prop)
+	{
+		$prop = preg_replace('/[\W]/', '_', strtolower($prop));
+	}
 }

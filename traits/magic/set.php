@@ -22,7 +22,7 @@ namespace shgysk8zer0\Core_API\Traits\Magic;
 trait Set
 {
 	/**
-	* Magic ssetter method.
+	* Magic setter method.
 	*
 	* @param string $prop  The property to work with
 	* @param mixed  $value The value to set it to.
@@ -31,6 +31,7 @@ trait Set
 	*/
 	final public function __set($prop, $value)
 	{
+		$this->magicPropConvert($prop);
 		is_array($this->{$this::MAGIC_PROPERTY})
 			? $this->{$this::MAGIC_PROPERTY}[$prop] = $value
 			: $this->{$this::MAGIC_PROPERTY}->$prop = $value;

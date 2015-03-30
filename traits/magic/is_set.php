@@ -30,6 +30,7 @@ trait Is_Set
 	 */
 	final public function __isset($prop)
 	{
+		$this->magicPropConvert($prop);
 		return is_array($this->{$this::MAGIC_PROPERTY})
 			? array_key_exists($prop, $this->{$this::MAGIC_PROPERTY})
 			: isset($this->{$this::MAGIC_PROPERTY}->$prop);

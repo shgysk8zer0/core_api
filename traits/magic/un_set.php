@@ -30,6 +30,7 @@ trait Un_Set
 	 */
 	final public function __unset($prop)
 	{
+		$this->magicPropConvert($prop);
 		unset($this->{$this::MAGIC_PROPERTY}->$prop);
 	}
 }
