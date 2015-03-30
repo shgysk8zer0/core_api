@@ -81,30 +81,67 @@ trait URL
 	 * @param void
 	 * @return string
 	 */
-	final protected function URLToString()
+	final protected function URLToString(array $components = array(
+		'scheme',
+		'user',
+		'pass',
+		'host',
+		'port',
+		'path',
+		'query',
+		'fragment'
+	))
 	{
-		if (! is_string($this->url_data['query'])) {
-			$this->url_data['query'] = http_build_query($this->url_data['query']);
+		$url = '';
+		if (
+			is_string($this->url_data['scheme'])
+			and in_array('scheme', $components)
+		) {
+			$url .= "{$this->url_data['scheme']}://";
 		}
-		$url = "{$this->url_data['scheme']}://";
 
-		if (@is_string($this->url_data['user'])) {
+		if (
+			@is_string($this->url_data['user'])
+			and in_array('user', $components)
+		) {
 			$url .= $this->url_data['user'];
 			if (@is_string($this->url_data['pass'])) {
 				$url .= ":{$this->url_data['pass']}";
 			}
 			$url .= '@';
 		}
-		$url .= $this->url_data['host'];
-		if (@is_int($this->url_data['port'])) {
+		if (
+			@is_string($this->url_data['host'])
+			and in_array('host', $components)
+		) {
+			$url .= $this->url_data['host'];
+		}
+		if (
+			@is_int($this->url_data['port'])
+			and in_array('port', $components)
+		) {
 			$url .= ":{$this->url_data['port']}";
 		}
-		$url .= '/' . trim($this->url_data['path'], '/');
-
-		if (@strlen($this->url_data['query'])) {
-			$url .= "?{$this->url_data['query']}";
+		if (
+			@is_string($this->url_data['path'])
+			and in_array('path', $components)
+		)
+		{
+			$url .= '/' . trim($this->url_data['path'], '/');
 		}
-		if (is_string($this->url_data['fragment'])) {
+
+		if(in_array('query', $components)) {
+			if (! is_string($this->url_data['query'])) {
+				$this->url_data['query'] = http_build_query($this->url_data['query']);
+			}
+			if (@strlen($this->url_data['query'])) {
+				$url .= "?{$this->url_data['query']}";
+			}
+		}
+		if (
+			is_string($this->url_data['fragment'])
+			and in_array('fragment', $components)
+		) {
 			$url .= "#{$this->url_data['fragment']}";
 		}
 		return $url;
