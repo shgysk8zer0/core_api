@@ -35,6 +35,12 @@ class PDO_Connect extends \PDO
 	use API\Traits\Logger;
 	use API\Traits\Default_Log_Method;
 
+	const DEFAULT_CON = 'connect.json';
+	const DEFAULT_HOST = 'localhost';
+	const DEFAULT_PORT = 3306;
+	const DEFAULT_TYPE = 'mysql';
+	const DEFAULT_EXTENSION = 'json';
+
 	/**
 	 * Whether or not connetion was successful
 	 * @var bool
@@ -77,11 +83,12 @@ class PDO_Connect extends \PDO
 	 */
 	protected $port;
 
-	const DEFAULT_CON = 'connect.json';
-	const DEFAULT_HOST = 'localhost';
-	const DEFAULT_PORT = 3306;
-	const DEFAULT_TYPE = 'mysql';
-	const DEFAULT_EXTENSION = 'json';
+	/**
+	 * Type of database to connect to (E.G. MySQL)
+	 * @var string
+	 */
+	protected $type;
+
 
 	/**
 	 * Creates a PDO instance representing a connection to a database
@@ -93,11 +100,11 @@ class PDO_Connect extends \PDO
 	final protected function connect($con, array $options = array())
 	{
 		if (is_null($con)) {
-			$con = $this::DEFAULT_CON;
+			$con = self::DEFAULT_CON;
 		}
 		if (is_string($con)) {
 			if (! pathinfo($con, PATHINFO_EXTENSION)) {
-				$con .= '.' . $this::DEFAULT_EXTENSION;
+				$con .= '.' . self::DEFAULT_EXTENSION;
 			}
 			$con = $this->parse($con);
 		} elseif (is_array($con)) {
@@ -108,10 +115,10 @@ class PDO_Connect extends \PDO
 		}
 		$this->user = $con->user;
 		$this->password = $con->password;
-		$this->type = (isset($con->type)) ? $con->type : $this::DEFAULT_TYPE;
+		$this->type = (isset($con->type)) ? $con->type : self::DEFAULT_TYPE;
 		$this->database = (isset($con->database)) ? $con->database : $this->user;
-		$this->port = (isset($con->port) and $con->port !== $this::DEFAULT_PORT) ? $con->port : null;
-		$this->host = (isset($con->host) and $con->host !== $this::DEFAULT_HOST) ? $con->host : null;
+		$this->port = (isset($con->port) and $con->port !== self::DEFAULT_PORT) ? $con->port : null;
+		$this->host = (isset($con->host) and $con->host !== self::DEFAULT_HOST) ? $con->host : null;
 		$this->dsn = "{$this->type}:dbname={$this->database}";
 
 		if (
@@ -128,10 +135,17 @@ class PDO_Connect extends \PDO
 		}
 
 		try {
-			parent::__construct($this->dsn, $this->user, $this->password, $options);
+			parent::__construct(
+				$this->dsn,
+				$this->user,
+				$this->password,
+				$options
+			);
+
 			$this->connected = true;
 		} catch(\PDOException $e) {
-			echo $e . PHP_EOL;
+			$this->connected = false;
+			//echo $e . PHP_EOL;
 		}
 	}
 }
