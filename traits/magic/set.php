@@ -31,9 +31,25 @@ trait Set
 	*/
 	final public function __set($prop, $value)
 	{
-		$this->magicPropConvert($prop);
-		is_array($this->{$this::MAGIC_PROPERTY})
-			? $this->{$this::MAGIC_PROPERTY}[$prop] = $value
-			: $this->{$this::MAGIC_PROPERTY}->$prop = $value;
+
+		// Check for setting restricted to existing data
+		if (
+			! defined('self::RESTRICT_SETTING')
+			or ! self::RESTRICT_SETTING
+			or isset($this->$prop)
+		) {
+			$this->magicPropConvert($prop);
+			is_array($this->{$this::MAGIC_PROPERTY})
+				? $this->{$this::MAGIC_PROPERTY}[$prop] = $value
+				: $this->{$this::MAGIC_PROPERTY}->$prop = $value;
+		} else {
+			throw new \InvalidArgumentException(
+				sprintf(
+					'No property `%s::%s` is set and setting is restricted',
+					__CLASS__,
+					$prop
+				)
+			);
+		}
 	}
 }
