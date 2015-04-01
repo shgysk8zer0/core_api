@@ -21,6 +21,7 @@
 */
 namespace shgysk8zer0\Core_API\Abstracts;
 
+use \shgysk8zer0\Core_API as API;
 /**
  * Extend \DOMDocument to make easier to use and add new features
  * @see http://php.net/manual/en/class.domdocument.php
@@ -28,11 +29,12 @@ namespace shgysk8zer0\Core_API\Abstracts;
 abstract class XML_Document extends \DOMDocument
 implements \shgysk8zer0\Core_API\Interfaces\Magic_Methods
 {
-	const VERSION = '1.0';
-	const ENCODING = 'UTF-8';
-	const ROOT_EL = 'root';
-	const FALSE = 0;
-	const TRUE = 1;
+	use API\Traits\Magic\XML_String;
+	use API\Traits\XMLAppend;
+
+	const VERSION   = '1.0';
+	const ENCODING  = 'UTF-8';
+	const ROOT_EL   = 'root';
 
 	/**
 	 * The root element of the document
@@ -79,7 +81,7 @@ implements \shgysk8zer0\Core_API\Interfaces\Magic_Methods
 	public function __set($tag, $content)
 	{
 		$tag = $this->root->appendChild($this->createElement($tag));
-		$this->append($tag, $content);
+		$this->XMLAppend($tag, $content);
 	}
 
 	/**
@@ -111,7 +113,7 @@ implements \shgysk8zer0\Core_API\Interfaces\Magic_Methods
 	 */
 	public function __call($tag, array $content = array())
 	{
-		return $this->append(
+		return $this->XMLAppend(
 			@$this->root->appendChild($this->createElement($tag)),
 			$content
 		);
@@ -129,7 +131,7 @@ implements \shgysk8zer0\Core_API\Interfaces\Magic_Methods
 		if (is_null($node)) {
 			$node = $this->root;
 		}
-		$this->append($node, $nodes);
+		$this->XMLAppend($node, $nodes);
 		return $this;
 	}
 
@@ -159,18 +161,6 @@ implements \shgysk8zer0\Core_API\Interfaces\Magic_Methods
 	}
 
 	/**
-	 * Method used when class is used as a string
-	 *
-	 * @return string Document as an HTML or XML string
-	 * @example echo $this;
-	 * @example $var = "{$this}";
-	 */
-	public function __toString()
-	{
-		return $this->saveXML();
-	}
-
-	/**
 	 * Magic method called by `var_dump()` [PHP >= 5.6 only]
 	 *
 	 * @param void
@@ -179,67 +169,6 @@ implements \shgysk8zer0\Core_API\Interfaces\Magic_Methods
 	public function  __debugInfo()
 	{
 		return simplexml_load_string($this);
-	}
-
-	/**
-	 * Append any supported $content to $parent
-	 *
-	 * @param  DOMNode $parent  Node to append to
-	 * @param  mixed   $content Content to append
-	 * @return self
-	 */
-	protected function append(\DOMNode &$parent = null, $content = null)
-	{
-		if (is_null($parent)) {
-			$parent = $this->root;
-		}
-		if (
-			is_string($content)
-			or is_numeric($content)
-			or (is_object($content) and method_exists($content, '__toString'))
-		) {
-			$parent->appendChild($this->createTextNode("$content"));
-		} elseif (
-			is_object($content)
-			and is_subclass_of($content, '\DOMNode')
-		) {
-			$parent->appendChild($content);
-		} elseif (
-			is_array($content)
-			or (is_object($content) and $content = get_object_vars($content))
-		) {
-			array_map(
-				function($node, $value) use (&$parent){
-					if (is_string($node)) {
-						if (substr($node, 0, 1) === '@') {
-							$parent->setAttribute(substr($node, 1), $value);
-						} else {
-							$node = $parent->appendChild($this->createElement($node));
-							if (is_string($value)) {
-								$this->append(
-									$node,
-									$this->createTextNode($value)
-								);
-							} else {
-								$this->append($node, $value);
-							}
-						}
-					} else {
-						$this->append($parent, $value);
-					}
-				},
-				array_keys($content),
-				array_values($content)
-			);
-		} elseif (is_bool($content)) {
-			$parent->appendChild(
-				$this->createTextNode($content ? self::TRUE : self::FALSE)
-			);
-		} else {
-			throw new \InvalidArgumentException('Unable to append unknown content [' . get_class($content) . '] to XML_Document');
-		}
-
-		return $this;
 	}
 
 	/**
