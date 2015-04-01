@@ -107,7 +107,29 @@ trait cURL
 	 */
 	final public function curlSetOpt($opt, $value)
 	{
-		curl_setopt($this->curl_handle, $opt, $value);
+		if (is_string($opt)) {
+			$opt = 'CURLOPT_' . strtoupper($opt);
+			if (defined($opt)) {
+				$opt = constant($opt);
+				curl_setopt($this->curl_handle, $opt, $value);
+			} else {
+				throw new \InvalidArgumentException(
+					sprintf('%s is not a valid cURL option', func_get_arg(0)),
+					500
+				);
+			}
+		} elseif (is_int($opt)) {
+			curl_setopt($this->curl_handle, $opt, $value);
+		} else {
+			throw new \InvalidArgumentException(
+				sprintf(
+					'%s expects $opt to be a string or int, %s given instead',
+					__METHOD__,
+					gettype($opt)
+				),
+				500
+			);
+		}
 		return $this;
 	}
 
@@ -119,6 +141,7 @@ trait cURL
 	 */
 	final public function curlSetOptArray(array $options = array())
 	{
+		$this->curlFilterOpts($options);
 		curl_setopt_array($this->curl_handle, $options);
 		return $this;
 	}
@@ -198,5 +221,46 @@ trait cURL
 	final public function curlGetInfo($opt = 0)
 	{
 		return curl_getinfo($this->curl_handle, $opt);
+	}
+
+	/**
+	 * Verifies and filters an array of [CURLOPT_* => ...] using pointer to opts
+	 * Any invalid options are removed from the array
+	 *
+	 * @param array $opts An array of CULROPT_s
+	 * @return void
+	 */
+	final protected function curlFilterOpts(array &$opts = array())
+	{
+		$keys = array_keys($opts);
+		$values = array_values($opts);
+		array_filter($keys, [$this, 'curlFilterOpt']);
+		foreach (array_diff(array_keys($opts), $keys) as $key) {
+			unset($values[array_search($key, array_keys($opts))]);
+		}
+		$opts = array_combine($keys, $values);
+	}
+
+	/**
+	 * Filter out non-valid CURLOPT_* keys, converting if possible
+	 *
+	 * @param mixed  $key [description]
+	 * @return bool       Whether or not $key is/can be converted to CURLOPT_*
+	 */
+	final protected function curlFilterOpt(&$key)
+	{
+		if (is_string($key)) {
+			$tmp = 'CURLOPT_' . strtoupper($key);
+			if (defined($tmp)) {
+				$key = constant($tmp);
+				return true;
+			} else {
+				return false;
+			}
+		} elseif (is_int($key)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
