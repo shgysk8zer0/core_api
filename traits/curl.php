@@ -169,6 +169,24 @@ trait cURL
 	}
 
 	/**
+	 * Can be used to upload a file with CURLOPT_POSTFIELDS.
+	 *
+	 * @param string $filename Filename of file
+	 * @param string $mimetype MIME type of file
+	 * @param string $postname Name of file for post data
+	 * @see https://php.net/manual/en/class.curlfile.php
+	 */
+	final public function curlFileCreate(
+		$filename,
+		$mimetype = null,
+		$postname = null
+	)
+	{
+		$file = new \CURLFile($fname, $mime, $name);
+		return [$file->getPostFilename(), $file];
+	}
+
+	/**
 	 * Return the last error number
 	 *
 	 * @param void
