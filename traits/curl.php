@@ -182,7 +182,7 @@ trait cURL
 		$postname = null
 	)
 	{
-		$file = new \CURLFile($fname, $mime, $name);
+		$file = new \CURLFile($filename, $mimetype, $postname);
 		return [$file->getPostFilename(), $file];
 	}
 
