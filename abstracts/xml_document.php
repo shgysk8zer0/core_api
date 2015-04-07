@@ -35,6 +35,7 @@ implements \shgysk8zer0\Core_API\Interfaces\Magic_Methods
 	const VERSION   = '1.0';
 	const ENCODING  = 'UTF-8';
 	const ROOT_EL   = 'root';
+	const XMLNS     = null;
 
 	/**
 	 * The root element of the document
@@ -53,7 +54,7 @@ implements \shgysk8zer0\Core_API\Interfaces\Magic_Methods
 		$version     = self::VERSION,
 		$encoding    = self::ENCODING,
 		$root        = self::ROOT_EL,
-		$xmlns       = null,
+		$xmlns       = self::XMLNS,
 		array $attrs = array()
 	)
 	{
