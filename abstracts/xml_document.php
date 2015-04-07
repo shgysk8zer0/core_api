@@ -27,7 +27,7 @@ use \shgysk8zer0\Core_API as API;
  * @see http://php.net/manual/en/class.domdocument.php
  */
 abstract class XML_Document extends \DOMDocument
-implements \shgysk8zer0\Core_API\Interfaces\Magic_Methods
+implements API\Interfaces\Magic_Methods
 {
 	use API\Traits\Magic\XML_String;
 	use API\Traits\XMLAppend;
