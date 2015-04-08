@@ -42,16 +42,16 @@ trait File_Resources
 	 * Opens file or URL
 	 *
 	 * @param  string $filename           Filename or URL
-	 * @param  string $mode               Type of access required to the stream
 	 * @param  bool   $use_include_path   Use include path?
+	 * @param  string $mode               Type of access required to the stream
 	 * @param  resource $context          https://php.net/manual/en/book.stream.php
 	 * @return self
 	 * @see https://php.net/manual/en/function.fopen.php
 	 */
 	final protected function fopen(
 		$filename = 'php://temp',
-		$mode = 'a+',
 		$use_include_path = false,
+		$mode = 'a+',
 		$context = null
 	)
 	{
