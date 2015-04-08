@@ -92,17 +92,17 @@ trait Files
 	 * @param mixed   $data  The data to write. String or single dimension array
 	 * @param int     $flags FILE_APPEND... no others have any effect
 	 */
-	public function filePutContents($data, $flags = 0)
+	public function filePutContents($data, $flags = FILE_APPEND)
 	{
 		if ($this->flocked) {
 			$flags |= LOCK_EX;
 		} else {
-			$flags &= LOCK_EX;
+			$flags &= ~LOCK_EX;
 		}
 		if ($this->use_include_path) {
 			$flags |= FILE_USE_INCLUDE_PATH;
 		} else {
-			$flags &= FILE_USE_INCLUDE_PATH;
+			$flags &= ~FILE_USE_INCLUDE_PATH;
 		}
 		file_put_contents($this->filename, $data, $flags);
 	}
@@ -131,6 +131,89 @@ trait Files
 	}
 
 	/**
+	 * Format line as CSV and write to file
+	 *
+	 * @param array  $fields      An array of values.
+	 * @param string $delimiter   Sets the field delimiter (1 character only)
+	 * @param string $enclosure   Sets the field enclosure (1 character only)
+	 * @param string $escape_char Sets the escape character (1 character only)
+	 */
+	final public function filePutCSV(
+		array $fields,
+		$delimiter = ',',
+		$enclosure = '"',
+		$escape_char = '\\'
+	)
+	{
+		if (strlen($delimiter) !== 1) {
+			trigger_error(
+				sprintf('%s: delimiter must be a single character', __FUNCTION__)
+			);
+		}
+		if (strlen($enclosure) !== 1) {
+			trigger_error(
+				sprintf('%s: enclosure must be a single character', __FUNCTION__)
+			);
+		}
+		if (strlen($escape_char) !== 1) {
+			trigger_error(
+				sprintf('%s: escape_char must be a single character', __FUNCTION__)
+			);
+		}
+		array_walk(
+			$fields,
+			function(&$col) use ($delimiter, $enclosure, $escape_char)
+			{
+				if (
+					strpbrk($col,"{$enclosure}{$delimiter}\t\r\n\f ") !== false
+				) {
+					$col = str_replace($enclosure, $enclosure. $enclosure, $col);
+					$col = $enclosure . $col . $enclosure;
+				}
+			}
+		);
+		$this->filePutContents(join($delimiter, $fields) . PHP_EOL);
+	}
+
+	/**
+	 * Read an entire file parsed as CSV
+	 *
+	 * @param string $delimiter Sets the field delimiter (1 character only)
+	 * @param string $enclosure Sets the field enclosure (1 character only)
+	 * @param string $escape    Sets the escape character (1 character only)
+	 * @return array            Multi-dimensional indexed array (rows & columns)
+	 */
+	final public function fileGetCSV(
+		$delimiter = ',',
+		$enclosure = '"',
+		$escape = '\\'
+	)
+	{
+		if (strlen($delimiter) !== 1) {
+			trigger_error(
+				sprintf('%s: delimiter must be a single character', __FUNCTION__)
+			);
+		}
+		if (strlen($enclosure) !== 1) {
+			trigger_error(
+				sprintf('%s: enclosure must be a single character', __FUNCTION__)
+			);
+		}
+		if (strlen($escape) !== 1) {
+			trigger_error(
+				sprintf('%s: escape must be a single character', __FUNCTION__)
+			);
+		}
+		return array_map(
+			function($line) use ($delimiter, $enclosure, $escape)
+			{
+				return str_getcsv($line, $delimiter, $enclosure, $escape);
+			},
+			$this->file(FILE_IGNORE_NEW_LINES)
+		);
+	}
+
+	/**
 	 * Outputs a file
 	 *
 	 * @param void
@@ -154,7 +237,7 @@ trait Files
 		if ($this->use_include_path) {
 			$flags |= FILE_USE_INCLUDE_PATH;
 		} else {
-			$flags &= FILE_USE_INCLUDE_PATH;
+			$flags &= ~FILE_USE_INCLUDE_PATH;
 		}
 		return file($this->filename, $flags);
 	}
