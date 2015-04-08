@@ -373,7 +373,13 @@ trait File_Resources
 		return fflush($this->fhandle);
 	}
 
-	final public function filePutContents($data, $flags = 0)
+	/**
+	 *  Write a string to a file
+	 *
+	 * @param mixed   $data  The data to write. String or single dimension array
+	 * @param int     $flags FILE_APPEND... no others have any effect
+	 */
+	final public function filePutContents($data, $flags = FILE_APPEND)
 	{
 		if ($flags & FILE_APPEND) {
 			$this->fseek(-1, SEEK_END);
@@ -390,11 +396,61 @@ trait File_Resources
 		$this->fwrite($data);
 	}
 
+	/**
+	 * Reads entire file into a string
+	 *
+	 * @param int     $offset The offset where the reading starts on the original stream.
+	 * @param int     $maxlen Maximum length of data read
+	 */
 	final public function fileGetContents($offset = -1, $maxlen = null)
 	{
-		$this->rewind();
-		$this->fseek($offset, SEEK_SET);
+		$this->fseek($offset + 1, SEEK_SET);
 		return $this->fread($maxlen);
+	}
+
+	/**
+	 * Read an entire file parsed as CSV
+	 *
+	 * @param string $delimiter Sets the field delimiter (1 character only)
+	 * @param string $enclosure Sets the field enclosure (1 character only)
+	 * @param string $escape    Sets the escape character (1 character only)
+	 * @return array            Multi-dimensional indexed array (rows & columns)
+	 */
+	final public function fileGetCSV(
+		$delimiter = ',',
+		$enclosure = '"',
+		$escape = '\\'
+	)
+	{
+		$rows = [];
+		$this->rewind();
+
+		while (! $this->feof()) {
+			$row = $this->fgetcsv(0, $delimiter, $enclosure, $escape);
+			if ($row !== false) {
+				array_push($rows, $row);
+			}
+			unset($row);
+		}
+		return $rows;
+	}
+
+	/**
+	 * Format line as CSV and write to file
+	 *
+	 * @param array  $fields      An array of values.
+	 * @param string $delimiter   Sets the field delimiter (1 character only)
+	 * @param string $enclosure   Sets the field enclosure (1 character only)
+	 * @param string $escape_char Sets the escape character (1 character only)
+	 */
+	final public function filePutCSV(
+		array $fields,
+		$delimiter = ',',
+		$enclosure = '"',
+		$escape_char = '\\'
+	)
+	{
+		$this->fputcsv($fields, $delimiter, $enclosure, $escape_char);
 	}
 
 	/**
