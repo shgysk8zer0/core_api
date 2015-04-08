@@ -33,7 +33,7 @@ interface File_Resources
 	 * @param mixed   $data  The data to write. String or single dimension array
 	 * @param int     $flags FILE_APPEND... no others have any effect
 	 */
-	public function filePutContents($data, $flags = 0);
+	public function filePutContents($data, $flags = FILE_APPEND);
 
 	/**
 	 * Reads entire file into a string
@@ -42,6 +42,35 @@ interface File_Resources
 	 * @param int     $maxlen Maximum length of data read
 	 */
 	public function fileGetContents($offset = -1, $maxlen = null);
+
+	/**
+	 * Read an entire file parsed as CSV
+	 *
+	 * @param string $delimiter Sets the field delimiter (1 character only)
+	 * @param string $enclosure Sets the field enclosure (1 character only)
+	 * @param string $escape    Sets the escape character (1 character only)
+	 * @return array            Multi-dimensional indexed array (rows & columns)
+	 */
+	public function fileGetCSV(
+		$delimiter = ',',
+		$enclosure = '"',
+		$escape = '\\'
+	);
+
+	/**
+	 * Format line as CSV and write to file
+	 *
+	 * @param array  $fields      An array of values.
+	 * @param string $delimiter   Sets the field delimiter (1 character only)
+	 * @param string $enclosure   Sets the field enclosure (1 character only)
+	 * @param string $escape_char Sets the escape character (1 character only)
+	 */
+	public function filePutCSV(
+		array $fields,
+		$delimiter = ',',
+		$enclosure = '"',
+		$escape_char = '\\'
+	);
 
 	/**
 	 * Outputs a file
