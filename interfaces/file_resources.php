@@ -27,7 +27,20 @@ namespace shgysk8zer0\Core_API\Interfaces;
  */
 interface File_Resources
 {
+	/**
+	 *  Write a string to a file
+	 *
+	 * @param mixed   $data  The data to write. String or single dimension array
+	 * @param int     $flags FILE_APPEND... no others have any effect
+	 */
 	public function filePutContents($data, $flags = 0);
+
+	/**
+	 * Reads entire file into a string
+	 *
+	 * @param int     $offset The offset where the reading starts on the original stream.
+	 * @param int     $maxlen Maximum length of data read
+	 */
 	public function fileGetContents($offset = -1, $maxlen = null);
 
 	/**
