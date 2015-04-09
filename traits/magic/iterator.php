@@ -31,63 +31,60 @@ trait Iterator
 	 * Current position of the Iterator. Incremented by `next` & reset by `rewind`
 	 * @var int
 	 */
-	protected $iterator_position = 0;
+	protected $_iterator_position = 0;
 
 	/**
-	 * Gets the value @ $iterator_position
+	 * Gets the value @ $_iterator_position
 	 *
 	 * @param void
 	 * @return mixed Whatever the current value is
 	 */
 	final public function current()
 	{
-		return array_values($this->{$this::MAGIC_PROPERTY})[$this->iterator_position];
+		return $this->{$this::MAGIC_PROPERTY}[$this->key()];
 	}
 
 	/**
-	 * Returns the original key (not $iterator_position) at the current position
+	 * Returns the original key (not $_iterator_position) at the current position
 	 *
 	 * @param void
 	 * @return mixed  Probably a string, but could be an integer.
 	 */
 	final public function key()
 	{
-		return array_keys($this->{$this::MAGIC_PROPERTY})[$this->iterator_position];
+		return @array_keys($this->{$this::MAGIC_PROPERTY})[$this->_iterator_position];
 	}
 
 	/**
-	 * Increment $iterator_position
+	 * Increment $_iterator_position
 	 *
 	 * @param void
 	 * @return void
 	 */
 	final public function next()
 	{
-		++$this->iterator_position;
+		++$this->_iterator_position;
 	}
 
 	/**
-	 * Reset $iterator_position to 0
+	 * Reset $_iterator_position to 0
 	 *
 	 * @param void
 	 * @return void
 	 */
 	final public function rewind()
 	{
-		$this->iterator_position = 0;
+		$this->_iterator_position = 0;
 	}
 
 	/**
-	 * Checks if data is set for current $iterator_position
+	 * Checks if data is set for current $_iterator_position
 	 *
 	 * @param void
 	 * @return bool Whether or not there is data set at current position
 	 */
 	final public function valid()
 	{
-		return array_key_exists(
-			$this->iterator_position,
-			array_values($this->{$this::MAGIC_PROPERTY})
-		);
+		return count($this->{$this::MAGIC_PROPERTY}) > $this->_iterator_position;
 	}
 }
