@@ -28,12 +28,6 @@ namespace shgysk8zer0\Core_API\Traits\Magic;
 trait Iterator
 {
 	/**
-	 * Current position of the Iterator. Incremented by `next` & reset by `rewind`
-	 * @var int
-	 */
-	protected $_iterator_position = 0;
-
-	/**
 	 * Gets the value @ $_iterator_position
 	 *
 	 * @param void
@@ -41,7 +35,7 @@ trait Iterator
 	 */
 	final public function current()
 	{
-		return $this->{$this::MAGIC_PROPERTY}[$this->key()];
+		return current($this->{$this::MAGIC_PROPERTY});
 	}
 
 	/**
@@ -52,7 +46,7 @@ trait Iterator
 	 */
 	final public function key()
 	{
-		return @array_keys($this->{$this::MAGIC_PROPERTY})[$this->_iterator_position];
+		return key($this->{$this::MAGIC_PROPERTY});
 	}
 
 	/**
@@ -63,7 +57,7 @@ trait Iterator
 	 */
 	final public function next()
 	{
-		++$this->_iterator_position;
+		next($this->{$this::MAGIC_PROPERTY});
 	}
 
 	/**
@@ -74,7 +68,7 @@ trait Iterator
 	 */
 	final public function rewind()
 	{
-		$this->_iterator_position = 0;
+		reset($this->{$this::MAGIC_PROPERTY});
 	}
 
 	/**
@@ -85,6 +79,6 @@ trait Iterator
 	 */
 	final public function valid()
 	{
-		return count($this->{$this::MAGIC_PROPERTY}) > $this->_iterator_position;
+		return $this->key() !== null;
 	}
 }
