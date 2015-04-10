@@ -30,7 +30,8 @@ namespace shgysk8zer0\Core_API\Traits;
  */
 trait Parser
 {
-	use File_IO;
+	use Files;
+	use Path_Info;
 
 	/**
 	 * Reads and parses file contents
@@ -40,20 +41,22 @@ trait Parser
 	 */
 	public function parse($file, $use_include_path = true)
 	{
-		$this->openFile($file, $use_include_path);
+		$this->getPathInfo($file, $use_include_path);
+
+		$this->fopen($this->absolute_path, false);
 
 		switch (strtolower($this->extension)) {
 			case 'json':
-				return json_decode($this->readFile());
+				return json_decode($this->fileGetContents());
+
 			case 'ini':
-				return (object)parse_ini_string($this->readFile(), true);
+				return (object)parse_ini_string($this->fileGetContents(), true);
+
 			case 'xml':
-				return simplexml_load_string($this->readFile());
+				return simplexml_load_string($this->fileGetContents());
 			case 'csv':
-				return array_map(
-					'str_getcsv',
-					explode(PHP_EOL, trim($this->readFile()))
-				);
+				return $this->fileGetCSV();
+
 			default:
 				throw new \InvalidArgumentException(
 					"{$this->extension} is not a supported extension."
