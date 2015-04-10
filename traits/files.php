@@ -31,7 +31,7 @@ trait Files
 	 * Keep $filename as a string
 	 * @var string
 	 */
-	protected $filename = null;
+	protected $_fhandle = null;
 
 	/**
 	 * Whether or not to request a lock on the file
@@ -54,7 +54,7 @@ trait Files
 	final protected function fopen($filename = 'php://temp', $use_include_path = false)
 	{
 
-		$this->filename = $filename;
+		$this->_fhandle = $filename;
 		$this->use_include_path = $use_include_path;
 		return $this;
 	}
@@ -65,7 +65,7 @@ trait Files
 	 */
 	final protected function fclose()
 	{
-		$this->filename = null;
+		$this->_fhandle = null;
 		$this->flocked = false;
 		$this->use_include_path = false;
 	}
@@ -104,7 +104,7 @@ trait Files
 		} else {
 			$flags &= ~FILE_USE_INCLUDE_PATH;
 		}
-		file_put_contents($this->filename, $data, $flags);
+		file_put_contents($this->_fhandle, $data, $flags);
 	}
 
 
@@ -117,13 +117,13 @@ trait Files
 	public function fileGetContents($offset = -1, $maxlen = null)
 	{
 		return is_int($maxlen) ? file_get_contents(
-			$this->filename,
+			$this->_fhandle,
 			$this->use_include_path,
 			null,
 			$offset,
 			$maxlen
 		) : file_get_contents(
-			$this->filename,
+			$this->_fhandle,
 			$this->use_include_path,
 			null,
 			$offset
@@ -221,7 +221,7 @@ trait Files
 	 */
 	public function readfile()
 	{
-		return readfile($this->filename, $this->use_include_path);
+		return readfile($this->_fhandle, $this->use_include_path);
 	}
 
 	/**
@@ -239,7 +239,7 @@ trait Files
 		} else {
 			$flags &= ~FILE_USE_INCLUDE_PATH;
 		}
-		return file($this->filename, $flags);
+		return file($this->_fhandle, $flags);
 	}
 
 	/**
@@ -252,9 +252,9 @@ trait Files
 	public function filesize()
 	{
 		if ($this->use_include_path) {
-			return filesize(stream_resolve_include_path($this->filename));
+			return filesize(stream_resolve_include_path($this->_fhandle));
 		} else {
-			return filesize($this->filename);
+			return filesize($this->_fhandle);
 		}
 	}
 
@@ -268,9 +268,9 @@ trait Files
 	public function fileinode()
 	{
 		if ($this->use_include_path) {
-			return fileinode(stream_resolve_include_path($this->filename));
+			return fileinode(stream_resolve_include_path($this->_fhandle));
 		} else {
-			return fileinode($this->filename);
+			return fileinode($this->_fhandle);
 		}
 	}
 
@@ -283,9 +283,9 @@ trait Files
 	public function fileatime()
 	{
 		if ($this->use_include_path) {
-			return fileatime(stream_resolve_include_path($this->filename));
+			return fileatime(stream_resolve_include_path($this->_fhandle));
 		} else {
-			return fileatime($this->filename);
+			return fileatime($this->_fhandle);
 		}
 	}
 
@@ -298,9 +298,9 @@ trait Files
 	public function filectime()
 	{
 		if ($this->use_include_path) {
-			return filectime(stream_resolve_include_path($this->filename));
+			return filectime(stream_resolve_include_path($this->_fhandle));
 		} else {
-			return filectime($this->filename);
+			return filectime($this->_fhandle);
 		}
 	}
 
@@ -313,9 +313,9 @@ trait Files
 	public function filemtime()
 	{
 		if ($this->use_include_path) {
-			return filemtime(stream_resolve_include_path($this->filename));
+			return filemtime(stream_resolve_include_path($this->_fhandle));
 		} else {
-			return filemtime($this->filename);
+			return filemtime($this->_fhandle);
 		}
 	}
 
@@ -328,9 +328,9 @@ trait Files
 	public function fileowner()
 	{
 		if ($this->use_include_path) {
-			return fileowner(stream_resolve_include_path($this->filename));
+			return fileowner(stream_resolve_include_path($this->_fhandle));
 		} else {
-			return fileowner($this->filename);
+			return fileowner($this->_fhandle);
 		}
 	}
 
@@ -343,9 +343,9 @@ trait Files
 	public function filegroup()
 	{
 		if ($this->use_include_path) {
-			return filegroup(stream_resolve_include_path($this->filename));
+			return filegroup(stream_resolve_include_path($this->_fhandle));
 		} else {
-			return filegroup($this->filename);
+			return filegroup($this->_fhandle);
 		}
 	}
 
@@ -358,9 +358,9 @@ trait Files
 	public function fileperms()
 	{
 		if ($this->use_include_path) {
-			return fileperms(stream_resolve_include_path($this->filename));
+			return fileperms(stream_resolve_include_path($this->_fhandle));
 		} else {
-			return fileperms($this->filename);
+			return fileperms($this->_fhandle);
 		}
 	}
 }
