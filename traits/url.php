@@ -53,13 +53,16 @@ trait URL
 				: '/',
 			'query' => array_key_exists('QUERY_STRING', $_SERVER)
 				? $_SERVER['QUERY_STRING']
-				: '',
+				: null,
 			'fragment' => null
 		];
 
 		if (is_string($url)) {
 			// If $url is a string, we can just use parse_url
 			$url = parse_url($url);
+			if ($url['path'] !== '/') {
+				$url['path'] = '/' . trim($url['path'], '/') . '/';
+			}
 		} elseif (is_object($url)) {
 			// If it is an object, we must convert it into an array
 			$url = get_object_vars($url);
@@ -127,7 +130,9 @@ trait URL
 			and in_array('path', $components)
 		)
 		{
-			$url .= '/' . trim($this->url_data['path'], '/');
+			$url .= $this->url_data['path'];
+		} else {
+			$url .= '/';
 		}
 
 		if(in_array('query', $components)) {
