@@ -60,9 +60,6 @@ trait URL
 		if (is_string($url)) {
 			// If $url is a string, we can just use parse_url
 			$url = parse_url($url);
-			if ($url['path'] !== '/') {
-				$url['path'] = '/' . trim($url['path'], '/') . '/';
-			}
 		} elseif (is_object($url)) {
 			// If it is an object, we must convert it into an array
 			$url = get_object_vars($url);
@@ -74,6 +71,9 @@ trait URL
 		if (is_array($url)) {
 			// Use array_merge to fill in missing components of $url
 			$this->url_data = array_merge($current_url, $url);
+		}
+		if (array_key_exists('path', $url) and $url['path'] !== '/') {
+			$url['path'] = '/' . trim($url['path'], '/') . '/';
 		}
 		return $this;
 	}
