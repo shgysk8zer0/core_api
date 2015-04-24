@@ -22,6 +22,7 @@ namespace shgysk8zer0\Core_API\Traits;
 
 trait PDOStatement
 {
+	use PDO_Errors;
 	/**
 	 * Binds a parameter to the specified variable name
 	 *
@@ -53,6 +54,7 @@ trait PDOStatement
 		} else {
 			parent::execute($this->bindConversion($bound_input_params));
 		}
+		$this->checkErrors();
 
 		return $this;
 	}

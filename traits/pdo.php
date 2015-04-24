@@ -25,6 +25,7 @@ namespace shgysk8zer0\Core_API\Traits;
  */
 trait PDO
 {
+	use PDO_Errors;
 	/**
 	 * Method to create database connections and parse $con is still required.
 	 * If extending Abstracts\PDO_Connect, this is already provided
@@ -84,13 +85,18 @@ trait PDO
 	 */
 	final public function __invoke($query, $n = null, $fetch_style = self::FETCH_CLASS)
 	{
-		$q = $this->query($query);
-		$q->execute();
-		$results = $q->fetchAll($fetch_style);
-		if (is_array($results)) {
-			return is_int($n) ? $results[$n] : $results;
-		} else {
-			return [];
+		try {
+			$q = $this->query($query);
+			$this->checkErrors();
+			$q->execute();
+			$results = $q->fetchAll($fetch_style);
+			if (is_array($results)) {
+				return is_int($n) ? $results[$n] : $results;
+			} else {
+				return [];
+			}
+		} catch (\PDOException $e) {
+			exit($e);
 		}
 	}
 }
