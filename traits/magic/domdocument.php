@@ -37,9 +37,22 @@ trait DOMDocument
 		if (property_exists($this, 'body')) {
 			$node = $this->body->appendChild($this->createElement($name));
 			if (is_string($value)) {
-				$node->nodeValue = $value;
+				$node->appendChild($this->createTextNode($value));
 			} elseif (is_object($value) and $value instanceof \DOMNode) {
 				$node->appendChild($value);
+			} elseif (is_array($value) or is_object($value) and $value = get_object_vars($value)) {
+				array_map(
+					function($tag, $content) use (&$node)
+					{
+						if (substr($tag, 0, 1) === '@') {
+							$node->setAttribiute(substr($tag, 1), $content);
+						} elseif (is_string($content)) {
+							$node->appendChild($this->createElement($tag, $content));
+						}
+					},
+					array_keys($value),
+					array_values($value)
+				);
 			} elseif (isset($value)) {
 				trigger_error(
 					sprintf(
@@ -65,10 +78,10 @@ trait DOMDocument
 	 */
 	final public function __get($name)
 	{
-		if (! in_array(substr($name, 0, 1), ['/', '*'])) {
+		if (! in_array(substr($name, 0, 1), ['/', '*', '@'])) {
 			$name = "*/{$name}";
 		}
-		return (new \DOMXPath($this))->query($name, $this->documentElement);
+		return (new \DOMXPath($this))->query($name);
 	}
 
 	/**
@@ -123,5 +136,46 @@ trait DOMDocument
 			);
 		}
 		return $this;
+	}
+
+	/**
+	 * Dynamically and seemingly magically build nodes and append to parent
+	 *
+	 * @param mixed    $key    Int or string to become tagname of new node
+	 * @param mixed    $value  String, array, sdtClass object, DOMNode
+	 * @param \DOMNode $parent Parent element to append to (defaults to $this)
+	 * @return void
+	 */
+	final protected function _nodeBuilder($key, $value = null, \DOMNode &$parent = null)
+	{
+		if (is_null($parent)) {
+			$parent = $this;
+		}
+		if (is_string($key)) {
+			if (substr($key, 0, 1) === '@' and (is_string($value) or is_numeric($value))) {
+				$parent->setAttribute(substr($key, 1), $value);
+			} else {
+				$node = $parent->appendChild($this->createElement($key));
+				if (is_string($value)) {
+					$node->appendChild($this->createTextNode($value));
+				} elseif ($value instanceof \DOMNode) {
+					$node->appendChild($content);
+				} elseif (is_array($value) or (is_object($value) and $value = get_object_vars($vvalue))) {
+					foreach ($value as $k => $v) {
+						$this->{__FUNCTION__}($k, $v, $node);
+						unset($k, $v);
+					}
+				}
+			}
+		} elseif (is_string($value)) {
+			$parent->appendChild($this->createTextNode($value));
+		} elseif ($value instanceof \DOMNode) {
+			$parent->appendChild($value);
+		} elseif (is_array($value) or is_object($value) and $value = get_object_vars($value)) {
+			foreach ($value as $k => $v) {
+				$this->{__FUNCTION__}($k, $v, $node);
+				unset($k, $v);
+			}
+		}
 	}
 }
