@@ -84,13 +84,12 @@ trait DOMDocument
 	 *
 	 * @param string $name Query for __get to return NodeList of
 	 * @return void
+	 * @see https://php.net/manual/en/domnode.removechild.php
 	 */
 	final public function __unset($name)
 	{
-		$nodes = $this->__get($name);
-		$length = $nodes->length;
-		for ($i=0; $i < $length; $i++) {
-			$this->removeChild($nodes->item($i));
+		foreach ($this->getElementsByTagName($name) as $node) {
+			$node->parentNode->removeChild($node);
 		}
 	}
 
