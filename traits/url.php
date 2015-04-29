@@ -38,28 +38,15 @@ trait URL
 	 */
 	final protected function parseURL($url = null)
 	{
-		$current_url = [
-			'scheme' => array_key_exists('REQUEST_SCHEME', $_SERVER)
-				? $_SERVER['REQUEST_SCHEME']
-				: 'http',
-			'host' => array_key_exists('HTTP_HOST', $_SERVER)
-				? $_SERVER['HTTP_HOST']
-				: 'localhost',
-			'port' => null,
-			'user' => null,
-			'pass' => null,
-			'path' => array_key_exists('REQUEST_URI', $_SERVER)
-				? $_SERVER['REQUEST_URI']
-				: '/',
-			'query' => array_key_exists('QUERY_STRING', $_SERVER)
-				? $_SERVER['QUERY_STRING']
-				: null,
-			'fragment' => null
-		];
-
 		if (is_string($url)) {
 			// If $url is a string, we can just use parse_url
 			$url = parse_url($url);
+			if (array_key_exists('pass', $url)) {
+				$url['pass'] = urldecode($url['pass']);
+			}
+			if (array_key_exists('user', $url)) {
+				$url['user'] = urldecode($url['user']);
+			}
 		} elseif (is_object($url)) {
 			// If it is an object, we must convert it into an array
 			$url = get_object_vars($url);
@@ -70,10 +57,30 @@ trait URL
 
 		if (is_array($url)) {
 			// Use array_merge to fill in missing components of $url
-			$this->url_data = array_merge($current_url, $url);
+			$this->{$this::MAGIC_PROPERTY} = array_merge(
+			[
+				'scheme' => array_key_exists('REQUEST_SCHEME', $_SERVER)
+					? $_SERVER['REQUEST_SCHEME']
+					: 'http',
+				'host' => array_key_exists('HTTP_HOST', $_SERVER)
+					? $_SERVER['HTTP_HOST']
+					: 'localhost',
+				'port' => null,
+				'user' => null,
+				'pass' => null,
+				'path' => array_key_exists('REQUEST_URI', $_SERVER)
+					? $_SERVER['REQUEST_URI']
+					: '/',
+				'query' => array_key_exists('QUERY_STRING', $_SERVER)
+					? $_SERVER['QUERY_STRING']
+					: null,
+				'fragment' => null
+			],
+				$url
+			);
 		}
-		if (array_key_exists('path', $url) and $url['path'] !== '/') {
-			$url['path'] = '/' . trim($url['path'], '/') . '/';
+		if ($this->path !== '/') {
+			$this->path = '/' . trim($this->path, '/');
 		}
 		return $this;
 	}
@@ -96,58 +103,39 @@ trait URL
 	))
 	{
 		$url = '';
-		if (
-			is_string($this->url_data['scheme'])
-			and in_array('scheme', $components)
-		) {
-			$url .= "{$this->url_data['scheme']}://";
+		if (is_string($this->scheme) and in_array('scheme', $components)) {
+			$url .= rtrim($this->scheme, ':/') . '://';
 		}
 
-		if (
-			@is_string($this->url_data['user'])
-			and in_array('user', $components)
-		) {
-			$url .= $this->url_data['user'];
-			if (@is_string($this->url_data['pass'])) {
-				$url .= ":{$this->url_data['pass']}";
+		if (@is_string($this->user) and in_array('user', $components)) {
+			$url .= urlencode($this->user);
+			if (@is_string($this->pass) and in_array('pass', $components)) {
+				$url .= ':' . urlencode($this->pass);
 			}
 			$url .= '@';
 		}
-		if (
-			@is_string($this->url_data['host'])
-			and in_array('host', $components)
-		) {
-			$url .= $this->url_data['host'];
+		if (@is_string($this->host) and in_array('host', $components)) {
+			$url .= $this->host;
 		}
-		if (
-			@is_int($this->url_data['port'])
-			and in_array('port', $components)
-		) {
-			$url .= ":{$this->url_data['port']}";
+		if (@is_int($this->port) and in_array('port', $components)) {
+			$url .= ":{$this->port}";
 		}
-		if (
-			@is_string($this->url_data['path'])
-			and in_array('path', $components)
-		)
-		{
-			$url .= $this->url_data['path'];
+		if (@is_string($this->path) and in_array('path', $components)) {
+			$url .= '/' . ltrim($this->path, '/');
 		} else {
 			$url .= '/';
 		}
 
-		if(in_array('query', $components)) {
-			if (! is_string($this->url_data['query'])) {
-				$this->url_data['query'] = http_build_query($this->url_data['query']);
+		if(isset($this->query) and in_array('query', $components)) {
+			if (! is_string($this->query)) {
+				$this->query = http_build_query($this->query);
 			}
-			if (@strlen($this->url_data['query'])) {
-				$url .= "?{$this->url_data['query']}";
+			if (@is_string($this->query)) {
+				$url .= '?' . ltrim($this->query, '?');
 			}
 		}
-		if (
-			is_string($this->url_data['fragment'])
-			and in_array('fragment', $components)
-		) {
-			$url .= "#{$this->url_data['fragment']}";
+		if (is_string($this->fragment) and in_array('fragment', $components)) {
+			$url .= '#' . ltrim($this->fragment, '#');
 		}
 		return $url;
 	}
