@@ -97,9 +97,13 @@ trait DOMElement
 	 */
 	final public function __invoke($content = '')
 	{
-		$fragment = $this->ownerDocument->createDocumentFragment();
-		$fragment->appendXML($content);
-		$this->appendChild($fragment);
+		if (is_string($content)) {
+			$fragment = $this->ownerDocument->createDocumentFragment();
+			$fragment->appendXML($content);
+			$this->appendChild($fragment);
+		} elseif ($content instanceof \DOMNode) {
+			$this->appendChild($content);
+		}
 		return $this;
 	}
 
