@@ -61,7 +61,7 @@ trait DOMDoc_Invoke
 		}
 
 		foreach ($attributes as $prop => $value) {
-			$child->setAttribute($prop, $value);
+			$child->setAttribute((is_string($prop)) ? $prop : $value, $value);
 		}
 
 		return $child;
