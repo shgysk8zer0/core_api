@@ -65,7 +65,10 @@ trait DOMDocument
 	 */
 	final public function __get($name)
 	{
-		return $this->getElementsByTagName($name);
+		if (! in_array(substr($name, 0, 1), ['/', '*'])) {
+			$name = "*/{$name}";
+		}
+		return (new \DOMXPath($this))->query($name, $this->documentElement);
 	}
 
 	/**
@@ -76,7 +79,7 @@ trait DOMDocument
 	 */
 	final public function __isset($name)
 	{
-		return $this->getElementsByTagName($name)->length > 0;
+		return $this->__get($name)->length !== 0;
 	}
 
 	/**
@@ -88,7 +91,7 @@ trait DOMDocument
 	 */
 	final public function __unset($name)
 	{
-		foreach ($this->getElementsByTagName($name) as $node) {
+		foreach ($this->__get($name) as $node) {
 			$node->parentNode->removeChild($node);
 		}
 	}
