@@ -57,7 +57,7 @@ trait URL
 
 		if (is_array($url)) {
 			// Use array_merge to fill in missing components of $url
-			$this->{$this::MAGIC_PROPERTY} = array_merge(
+			$this->url_data = array_merge(
 			[
 				'scheme' => array_key_exists('REQUEST_SCHEME', $_SERVER)
 					? $_SERVER['REQUEST_SCHEME']
@@ -79,8 +79,8 @@ trait URL
 				$url
 			);
 		}
-		if ($this->path !== '/') {
-			$this->path = '/' . trim($this->path, '/');
+		if ($this->url_data['path'] !== '/') {
+			$this->url_data['path'] = '/' . trim($this->url_data['path'], '/');
 		}
 		return $this;
 	}
@@ -103,39 +103,49 @@ trait URL
 	))
 	{
 		$url = '';
-		if (is_string($this->scheme) and in_array('scheme', $components)) {
-			$url .= rtrim($this->scheme, ':/') . '://';
+		if (in_array('scheme', $components)) {
+			if (is_string($this->url_data['scheme'])) {
+				$url .= rtrim($this->url_data['scheme'], ':/') . '://';
+			} else {
+				$url .= 'http://';
+			}
 		}
 
-		if (@is_string($this->user) and in_array('user', $components)) {
-			$url .= urlencode($this->user);
-			if (@is_string($this->pass) and in_array('pass', $components)) {
-				$url .= ':' . urlencode($this->pass);
+		if (@is_string($this->url_data['user']) and in_array('user', $components)) {
+			$url .= urlencode($this->url_data['user']);
+			if (@is_string($this->url_data['pass']) and in_array('pass', $components)) {
+				$url .= ':' . urlencode($this->url_data['pass']);
 			}
 			$url .= '@';
 		}
-		if (@is_string($this->host) and in_array('host', $components)) {
-			$url .= $this->host;
+
+		if (in_array('host', $components)) {
+			if (@is_string($this->url_data['host'])) {
+				$url .= $this->url_data['host'];
+			} else {
+				$url .= 'localhost';
+			}
 		}
-		if (@is_int($this->port) and in_array('port', $components)) {
-			$url .= ":{$this->port}";
+		if (@is_int($this->url_data['port']) and in_array('port', $components)) {
+			$url .= ":{$this->url_data['port']}";
 		}
-		if (@is_string($this->path) and in_array('path', $components)) {
-			$url .= '/' . ltrim($this->path, '/');
-		} else {
-			$url .= '/';
+		if (in_array('path', $components)) {
+			if (@is_string($this->url_data['path'])) {
+				$url .= '/' . ltrim($this->url_data['path'], '/');
+			} else {
+				$url .= '/';
+			}
 		}
 
-		if(isset($this->query) and in_array('query', $components)) {
-			if (! is_string($this->query)) {
-				$this->query = http_build_query($this->query);
-			}
-			if (@is_string($this->query)) {
-				$url .= '?' . ltrim($this->query, '?');
+		if(isset($this->url_data['query']) and in_array('query', $components)) {
+			if (! is_string($this->url_data['query'])) {
+				$url .= '?' . http_build_query($this->url_data['query']);
+			} elseif (@is_string($this->url_data['query'])) {
+				$url .= '?' . ltrim($this->url_data['query'], '?');
 			}
 		}
-		if (is_string($this->fragment) and in_array('fragment', $components)) {
-			$url .= '#' . ltrim($this->fragment, '#');
+		if (@is_string($this->url_data['fragment']) and in_array('fragment', $components)) {
+			$url .= '#' . ltrim($this->url_data['fragment'], '#');
 		}
 		return $url;
 	}
