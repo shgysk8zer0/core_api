@@ -1,6 +1,6 @@
 <?php
 /**
- * @author Chris Zuber
+ * @author Chris Zuber <shgysk8zer0@gmail.com>
  * @package shgysk8zer0\Core_API
  * @version 1.0.0
  * @copyright 2015, Chris Zuber
@@ -20,17 +20,23 @@
  */
 namespace shgysk8zer0\Core_API\Traits\Magic;
 
+/**
+ * Magic method to convert a DOMDocument or DOMElement to an XML string
+ */
 trait XML_String
 {
 	/**
-	 * Method used when class is used as a string
-	 *
-	 * @return string Document as an HTML or XML string
-	 * @example echo $this;
-	 * @example $var = "{$this}";
-	 */
-	public function __toString()
+	* Return the document or element as an XML string
+	*
+	* @param void
+	* @return string HTML content of document or element
+	*/
+	final public function __toString()
 	{
-		return $this->saveXML();
+		if ($this instanceof \DOMDocument) {
+			return $this->saveXML();
+		} elseif ($this instanceof \DOMElement) {
+			return $this->ownerDocument->saveXML($this);
+		}
 	}
 }
