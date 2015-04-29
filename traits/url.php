@@ -137,7 +137,11 @@ trait URL
 			}
 		}
 
-		if(isset($this->url_data['query']) and in_array('query', $components)) {
+		if(
+			isset($this->url_data['query'])
+			and ! empty($this->url_data['query'])
+			and in_array('query', $components)
+		) {
 			if (! is_string($this->url_data['query'])) {
 				$url .= '?' . http_build_query($this->url_data['query']);
 			} elseif (@is_string($this->url_data['query'])) {
