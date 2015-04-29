@@ -51,9 +51,27 @@ trait DOMDoc_Invoke
 			$child = $parent->appendChild($this->createElement($tag));
 		} elseif (is_string($content)) {
 			$child = $parent->appendChild($this->createElement($tag, $content));
-		} elseif (is_object($content) and $cotnent instanceof \DOMNode) {
+		} elseif (is_object($content) and $content instanceof \DOMNode) {
 			$child = $parent->appendChild($this->createElement($tag));
 			$child->appendChild($content);
+		} elseif (is_array($content)) {
+			$child = $parent->appendChild($this->createElement($tag));
+			array_map(
+				function($key, $value) use (&$child)
+				{
+					if (is_int($key) and is_string($value)) {
+						$child->appendChild($this->createTextNode($value));
+					} elseif (is_string($key)) {
+						if (substr($key, 0, 1) === '@') {
+							$child->setAttribute(substr($key, 1), $value);
+						} else {
+							$this($key, $value, [], $child);
+						}
+					}
+				},
+				array_keys($content),
+				array_values($content)
+			);
 		} else {
 			throw new \InvalidArgumentException(
 				sprintf('Content must be null, string, or \\DOMNode, %s given', gettype($content))
