@@ -160,7 +160,7 @@ trait DOMDocument
 					$node->appendChild($this->createTextNode($value));
 				} elseif ($value instanceof \DOMNode) {
 					$node->appendChild($content);
-				} elseif (is_array($value) or (is_object($value) and $value = get_object_vars($vvalue))) {
+				} elseif (is_array($value) or (is_object($value) and $value = get_object_vars($value))) {
 					foreach ($value as $k => $v) {
 						$this->{__FUNCTION__}($k, $v, $node);
 						unset($k, $v);
