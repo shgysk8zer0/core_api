@@ -40,7 +40,8 @@ trait Passwords
 		array $options = array()
 	)
 	{
-		return password_hash($password, $algo, $options);
+		$password = password_hash($password, $algo, $options);
+		return $password;
 	}
 
 	/**
