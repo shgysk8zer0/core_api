@@ -63,7 +63,12 @@ trait DOMElement
 	 */
 	final public function __get($name)
 	{
-		return $this->getAttribute($name);
+		if (substr($name, 0, 1) === '@') {
+			return $this->getAttribute(substr($name, 1));
+		} else {
+			$xpath = new \DOMXPath($this->ownerDocument);
+			return $xpath->query($name, $this);
+		}
 	}
 
 	/**
@@ -103,6 +108,17 @@ trait DOMElement
 			$this->appendChild($fragment);
 		} elseif ($content instanceof \DOMNode) {
 			$this->appendChild($content);
+		}
+		return $this;
+	}
+
+	final public function appendHTML($html)
+	{
+		$dom = new \DOMDocument;
+		$dom->loadHTML("{$html}");
+		$xpath = new \DOMXpath($dom);
+		foreach ($xpath->query('/*') as $node) {
+			$this->appendChild($this->ownerDocument->importNode($node, true));
 		}
 		return $this;
 	}
