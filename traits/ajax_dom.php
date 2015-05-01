@@ -27,14 +27,6 @@ namespace shgysk8zer0\Core_API\Traits;
 trait AJAX_DOM
 {
 	/**
-	 * Called when class is used as a string (e.g. echo)
-	 *
-	 * @param void
-	 * @return string
-	 */
-	abstract function __toString();
-
-	/**
 	 * Array to store data in
 	 * @var array
 	 */

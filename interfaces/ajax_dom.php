@@ -27,14 +27,6 @@ namespace shgysk8zer0\Core_API\Interfaces;
 Interface AJAX_DOM
 {
 	/**
-	 * Called when class is used as a string (e.g. echo)
-	 *
-	 * @param void
-	 * @return string
-	 */
-	public function __toString();
-
-	/**
 	 * Sets textContent of elements matching $selector to $content
 	 *
 	 * @param string $selector  Any valid CSS selector
