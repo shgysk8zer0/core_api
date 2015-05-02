@@ -104,7 +104,7 @@ trait DOMElement
 	{
 		if (is_string($content)) {
 			$fragment = $this->ownerDocument->createDocumentFragment();
-			$fragment->appendXML($content);
+			$fragment->appendXML(str_replace('&nbsp;', ' ', $content));
 			$this->appendChild($fragment);
 		} elseif ($content instanceof \DOMNode) {
 			$this->appendChild($content);
