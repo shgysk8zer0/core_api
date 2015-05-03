@@ -65,9 +65,15 @@ trait URL
 				'host' => array_key_exists('HTTP_HOST', $_SERVER)
 					? $_SERVER['HTTP_HOST']
 					: 'localhost',
-				'port' => null,
-				'user' => null,
-				'pass' => null,
+				'port' => array_key_exists('SERVER_PORT', $_SERVER)
+					? (int)$_SERVER['SERVER_PORT']
+					: 80,
+				'user' => array_key_exists('PHP_AUTH_USER', $_SERVER)
+					? $_SERVER['PHP_AUTH_USER']
+					: null,
+				'pass' => array_key_exists('PHP_AUTH_PW', $_SERVER)
+					? $_SERVER['PHP_AUTH_PW']
+					: null,
 				'path' => array_key_exists('REQUEST_URI', $_SERVER)
 					? $_SERVER['REQUEST_URI']
 					: '/',
@@ -126,7 +132,11 @@ trait URL
 				$url .= 'localhost';
 			}
 		}
-		if (@is_int($this->url_data['port']) and in_array('port', $components)) {
+		if (
+			@is_int($this->url_data['port'])
+			and ! in_array($this->url_data['port'], array(80, 443))
+			and in_array('port', $components)
+		) {
 			$url .= ":{$this->url_data['port']}";
 		}
 		if (in_array('path', $components)) {
