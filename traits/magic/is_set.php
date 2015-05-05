@@ -2,6 +2,7 @@
 /**
  * @author Chris Zuber <shgysk8zer0@gmail.com>
  * @package shgysk8zer0\Core_API
+ * @subpackage Traits
  * @version 1.0.0
  * @copyright 2015, Chris Zuber
  * @license http://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
@@ -35,4 +36,6 @@ trait Is_Set
 			? array_key_exists($prop, $this->{$this::MAGIC_PROPERTY})
 			: isset($this->{$this::MAGIC_PROPERTY}->$prop);
 	}
+
+	abstract protected function magicPropConvert(&$prop);
 }

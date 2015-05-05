@@ -2,6 +2,7 @@
 /**
  * @author Chris Zuber <shgysk8zer0@gmail.com>
  * @package shgysk8zer0\Core_API
+ * @subpackage Traits
  * @version 1.0.0
  * @copyright 2015, Chris Zuber
  * @license http://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
@@ -31,6 +32,16 @@ trait Un_Set
 	final public function __unset($prop)
 	{
 		$this->magicPropConvert($prop);
-		unset($this->{$this::MAGIC_PROPERTY}->$prop);
+		if (defined('self::RESTRICT_SETTING')) {
+			$this->__set($prop, null);
+		} elseif (is_array($this->{$this::MAGIC_PROPERTY})) {
+			unset($this->{$this::MAGIC_PROPERTY}[$prop]);
+		} else {
+			unset($this->{$this::MAGIC_PROPERTY}->$prop);
+		}
 	}
+
+	abstract public function __set($prop, $value);
+
+	abstract protected function magicPropConvert(&$prop);
 }

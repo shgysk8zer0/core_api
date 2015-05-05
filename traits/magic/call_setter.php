@@ -2,6 +2,7 @@
 /**
  * @author Chris Zuber <shgysk8zer0@gmail.com>
  * @package shgysk8zer0\Core_API
+ * @subpackage Traits
  * @version 1.0.0
  * @copyright 2015, Chris Zuber
  * @license http://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
@@ -36,7 +37,13 @@ trait Call_Setter
 	 */
 	final public function __call($name, array $arguments = array())
 	{
-		$this->__set($name, join(null, $arguments));
+		array_map(
+			[$this, '__set'],
+			array_pad(array(), count($arguments), $name),
+			array_values($arguments)
+		);
 		return $this;
 	}
+
+	abstract public function __set($name, $value);
 }

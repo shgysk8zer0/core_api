@@ -2,6 +2,7 @@
 /**
  * @author Chris Zuber <shgysk8zer0@gmail.com>
  * @package shgysk8zer0\Core_API
+ * @subpackage Traits
  * @version 1.0.0
  * @copyright 2015, Chris Zuber
  * @license http://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
@@ -35,20 +36,43 @@ trait Call
 	 * @method get*
 	 * @method set*
 	 * @method has*
+	 * @method rem*
+	 * @method del*
 	 */
 	final public function __call($name, array $arguments = array())
 	{
 		$name = strtolower($name);
-		$act = substr($name, 0, 3);
 		$key = substr($name, 3);
-		switch($act) {
+		switch(substr($name, 0, 3)) {
 			case 'get':
 				return $this->__get($key);
+
 			case 'set':
-				$this->__set($key, current($arguments));
+				array_map(
+					[$this, '__set'],
+					array_pad(array(), count($arguments), $key),
+					array_values($arguments)
+				);
 				return $this;
+
 			case 'has':
 				return $this->__isset($key);
+
+			case 'del':
+			case 'rem':
+				$this->__unset($name);
+				return $this;
+
+			default:
+				throw new \InvalidArgumentException(sprintf('%s is not a valid method', $name));
 		}
 	}
+
+	abstract public function __set($name, $value);
+
+	abstract public function __get($name);
+
+	abstract public function __isset($name);
+
+	abstract public function __unset($name);
 }
