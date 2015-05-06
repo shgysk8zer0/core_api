@@ -32,7 +32,7 @@ trait DOMElement
 	 * @param string $value The value of the attribute.
 	 * @return void
 	 */
-	final public function __set($name, $value = 'true')
+	final public function __set($name, $value)
 	{
 		if (substr($name, 0, 1) === '@') {
 			$this->setAttribute(substr($name, 1), $value);
