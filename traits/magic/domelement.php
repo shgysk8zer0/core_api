@@ -2,6 +2,7 @@
 /**
  * @author Chris Zuber <shgysk8zer0@gmail.com>
  * @package shgysk8zer0\Core_API
+ * @subpackage Traits
  * @version 1.0.0
  * @copyright 2015, Chris Zuber
  * @license http://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
@@ -32,7 +33,7 @@ trait DOMElement
 	 * @param string $value The value of the attribute.
 	 * @return void
 	 */
-	final public function __set($name, $value = 'true')
+	final public function __set($name, $value)
 	{
 		if (substr($name, 0, 1) === '@') {
 			$this->setAttribute(substr($name, 1), $value);
@@ -102,12 +103,12 @@ trait DOMElement
 	 */
 	final public function __invoke($content = '')
 	{
-		if (is_string($content)) {
+		if ($content instanceof \DOMNode) {
+			$this->appendChild($content);
+		} elseif (is_string($content) or $content instanceof \shgsk8zer0\Core_API\Interfaces\String) {
 			$fragment = $this->ownerDocument->createDocumentFragment();
 			$fragment->appendXML(str_replace('&nbsp;', ' ', $content));
 			$this->appendChild($fragment);
-		} elseif ($content instanceof \DOMNode) {
-			$this->appendChild($content);
 		}
 		return $this;
 	}
