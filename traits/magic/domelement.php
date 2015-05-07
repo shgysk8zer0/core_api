@@ -37,10 +37,10 @@ trait DOMElement
 	{
 		if (substr($name, 0, 1) === '@') {
 			$this->setAttribute(substr($name, 1), $value);
+		} elseif (substr($name, 0, 1) === '!') {
+			$this->appendChild($this->ownerDocument->createComment(substr($name, 1)));
 		} else {
-			if (is_string($value) or is_null($value)) {
-				$this->appendChild(new self($name, $value));
-			} elseif (is_object($value) and $value instanceof \DOMNode) {
+			if (is_object($value) and $value instanceof \DOMNode) {
 				$this->appendChild(new self($name))->appendChild($value);
 			} elseif (is_array($value)) {
 				$node = $this->appendChild(new self($name));
@@ -52,6 +52,8 @@ trait DOMElement
 					array_keys($value),
 					array_values($value)
 				);
+			} elseif (is_string($value) or is_null($value) or is_numeric($value)) {
+				$this->appendChild(new self($name, $value));
 			}
 		}
 	}
