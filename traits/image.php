@@ -4,7 +4,6 @@
  * @package shgysk8zer0\Core_API
  * @subpackage Traits
  * @version 1.0.0
- * @link https://developer.github.com/webhooks/
  * @copyright 2015, Chris Zuber
  * @license http://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
  * This program is free software; you can redistribute it and/or
@@ -221,7 +220,7 @@ trait Image
 	 */
 	final public function rotateImage(
 		$angle              = 0,
-		array $bgd_color    = array(255, 0, 0, 0),
+		array $bgd_color    = array(0, 0, 0, 127),
 		$ignore_transparent = false
 	)
 	{
@@ -298,6 +297,12 @@ trait Image
 		return imagepng($this->_image_handle, $filename, $quality, $filters);
 	}
 
+	/**
+	 * Generic save funciton, which converts image according to extension
+	 *
+	 * @param string $filename Path and extension to save to
+	 * @return bool            Success or failure of save
+	 */
 	final public function saveImage($filename)
 	{
 		$extension = pathinfo($filename, PATHINFO_EXTENSION);
