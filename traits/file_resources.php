@@ -146,7 +146,7 @@ trait File_Resources
 	 */
 	final protected function ftruncate($size = 0)
 	{
-		ftruncate($this->fhandle, $size);
+		return ftruncate($this->fhandle, $size);
 	}
 
 	/**
