@@ -29,7 +29,7 @@ trait XML_String
 	* Return the document or element as an XML string
 	*
 	* @param void
-	* @return string HTML content of document or element
+	* @return string XML content of document or element
 	*/
 	final public function __toString()
 	{
