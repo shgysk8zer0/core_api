@@ -41,7 +41,7 @@ trait AJAX_DOM
 	 */
 	final public function text($selector = null, $content = null)
 	{
-		$this->response['text'][(string)$selector] = (string)$content;
+		$this->response['text']["$selector"] = "$content";
 		return $this;
 	}
 
@@ -57,16 +57,16 @@ trait AJAX_DOM
 	final public function notify($title = null, $body = null, $icon = null)
 	{
 		$this->response['notify'] = [];
-		if (is_string($title)) {
-			$this->response['notify']['title'] = (string)$title;
+		if (isset($title)) {
+			$this->response['notify']['title'] = "$title";
 		}
 
-		if (is_string($body)) {
-			$this->response['notify']['body'] = (string)$body;
+		if (isset($body)) {
+			$this->response['notify']['body'] = "$body";
 		}
 
-		if (is_string($icon)) {
-			$this->response['notify']['icon'] = $icon;
+		if (isset($icon)) {
+			$this->response['notify']['icon'] = "$icon";
 		}
 
 		return $this;
@@ -84,7 +84,7 @@ trait AJAX_DOM
 			$this->response['html'] = [];
 		}
 
-		$this->response['html'][(string)$selector] = (string)$content;
+		$this->response['html']["$selector"] = "$content";
 		return $this;
 	}
 
@@ -100,7 +100,7 @@ trait AJAX_DOM
 			$this->response['append'] = [];
 		}
 
-		$this->response['append'][(string)$selector] = (string)$content;
+		$this->response['append']["$selector"] = "$content";
 		return $this;
 	}
 
@@ -117,7 +117,7 @@ trait AJAX_DOM
 			$this->response['prepend'] = [];
 		}
 
-		$this->response['prepend'][(string)$selector] = (string)$content;
+		$this->response['prepend']["$selector"] = "$content";
 		return $this;
 	}
 
@@ -133,7 +133,7 @@ trait AJAX_DOM
 			$this->response['before'] = [];
 		}
 
-		$this->response['before'][(string)$selector] = (string)$content;
+		$this->response['before']["$selector"] = "$content";
 		return $this;
 	}
 
@@ -145,7 +145,7 @@ trait AJAX_DOM
 	 */
 	final public function after($selector = null, $content = null)
 	{
-		$this->response['after'][(string)$selector] = (string)$content;
+		$this->response['after']["$selector"] = "$content";
 		return $this;
 	}
 
@@ -157,7 +157,7 @@ trait AJAX_DOM
 	 */
 	final public function addClass($selector = null, $classes = null)
 	{
-		$this->response['addClass'][(string)$selector] = (string)$classes;
+		$this->response['addClass']["$selector"] = "$classes";
 		return $this;
 	}
 
@@ -169,7 +169,7 @@ trait AJAX_DOM
 	 */
 	final public function removeClass($selector = null, $classes = null)
 	{
-		$this->response['removeClass'][(string)$selector] = (string)$classes;
+		$this->response['removeClass']["$selector"] = $classes;
 		return $this;
 	}
 
@@ -181,8 +181,8 @@ trait AJAX_DOM
 	final public function remove($selector = null)
 	{
 		(array_key_exists('remove', $this->response))
-			? $this->response['remove'] .= ',' . (string)$selector
-			: $this->response['remove'] = (string)$selector;
+			? $this->response['remove'] .= ',' . "$selector"
+			: $this->response['remove'] = "$selector";
 
 		return $this;
 	}
@@ -200,7 +200,7 @@ trait AJAX_DOM
 	 */
 	final public function attributes($selector = null, $attribute = null, $value = true)
 	{
-		$this->response['attributes'][(string)$selector][(string)$attribute] = $value;
+		$this->response['attributes']["$selector"]["$attribute"] = $value;
 		return $this;
 	}
 
@@ -216,7 +216,7 @@ trait AJAX_DOM
 	 */
 	final public function increment($selector, $attribute = 'value', $by = 1)
 	{
-		$this->response['increment'][(string)$selector][(string)$attribute] = (float)$by;
+		$this->response['increment']["$selector"]["$attribute"] = (float)$by;
 		return $this;
 	}
 
@@ -229,7 +229,7 @@ trait AJAX_DOM
 	 */
 	final public function stepUp($selector, $by = 1)
 	{
-		$this->response['stepUp'][(string)$selector] = $by;
+		$this->response['stepUp']["$selector"] = $by;
 	}
 
 	/**
@@ -241,7 +241,7 @@ trait AJAX_DOM
 	 */
 	final public function stepDown($selector, $by = 1)
 	{
-		$this->response['stepDown'][(string)$selector] = $by;
+		$this->response['stepDown']["$selector"] = $by;
 	}
 
 	/**
@@ -258,8 +258,8 @@ trait AJAX_DOM
 	final public function script($js = null)
 	{
 		(array_key_exists('script', $this->response))
-			? $this->response['script'] .= ';' . (string)$js
-			: $this->response['script'] = (string)$js;
+			? $this->response['script'] .= ';' . $js
+			: $this->response['script'] = "$js";
 
 		return $this;
 	}
@@ -275,7 +275,7 @@ trait AJAX_DOM
 	 */
 	final public function sessionStorage($key = null, $value = null)
 	{
-		$this->response['sessionStorage'][(string)$key] = $value;
+		$this->response['sessionStorage']["$key"] = $value;
 		return $this;
 	}
 
@@ -291,7 +291,7 @@ trait AJAX_DOM
 
 	final public function localStorage($key = null, $value = null)
 	{
-		$this->response['localStorage'][(string)$key] = $value;
+		$this->response['localStorage']["$key"] = $value;
 		return $this;
 	}
 
@@ -381,7 +381,7 @@ trait AJAX_DOM
 	final public function scrollTo($sel = 'body', $nth = 0)
 	{
 		$this->response['scrollTo'] = [
-			'sel' => (string)$sel,
+			'sel' => "$sel",
 			'nth' => (int)$nth
 		];
 		return $this;
@@ -396,7 +396,7 @@ trait AJAX_DOM
 	 */
 	final public function focus($sel = 'input')
 	{
-		$this->response['focus'] = (string)$sel;
+		$this->response['focus'] = "$sel";
 		return $this;
 	}
 
@@ -409,7 +409,7 @@ trait AJAX_DOM
 	 */
 	final public function select($sel = 'input')
 	{
-		$this->response['focus'] = (string)$sel;
+		$this->response['focus'] = "$sel";
 		return $this;
 	}
 
@@ -435,7 +435,7 @@ trait AJAX_DOM
 	 */
 	final public function clear($form = null)
 	{
-		$this->response['clear'] = (string)$form;
+		$this->response['clear'] = "$form";
 		return $this;
 	}
 
@@ -452,11 +452,11 @@ trait AJAX_DOM
 	 */
 	final public function triggerEvent($selector = null, $event = null)
 	{
-		if (!array_key_exists('triggerEvent', $this->response)) {
+		if (! array_key_exists('triggerEvent', $this->response)) {
 			$this->response['triggerEvent'] = [];
 		}
 
-		$this->response['triggerEvent'][(string)$selector] = (string)$event;
+		$this->response['triggerEvent']["$selector"] = "$event";
 		return $this;
 	}
 
@@ -472,10 +472,10 @@ trait AJAX_DOM
 	 * @example $resp->open('example.com', ['width' => 900], false, '_top')
 	 */
 	final public function open(
-		$url = null,
+		$url              = null,
 		array $paramaters = array(),
-		$replace = false,
-		$name = '_blank'
+		$replace          = false,
+		$name             = '_blank'
 	)
 	{
 		$specs = [
@@ -493,9 +493,9 @@ trait AJAX_DOM
 		$specs = array_merge($specs, $paramaters);
 
 		$this->response['open'] = [
-			'url' => $url,
-			'name' => $name,
-			'specs' => $specs,
+			'url'     => $url,
+			'name'    => $name,
+			'specs'   => $specs,
 			'replace' => $replace
 		];
 
@@ -515,7 +515,7 @@ trait AJAX_DOM
 	 */
 	final public function show($sel = null)
 	{
-		$this->response['show'] = (string)$sel;
+		$this->response['show'] = "$sel";
 		return $this;
 	}
 
@@ -532,7 +532,7 @@ trait AJAX_DOM
 	 */
 	final public function showModal($sel = null)
 	{
-		$this->response['showModal'] = (string)$sel;
+		$this->response['showModal'] = "$sel";
 		return $this;
 	}
 
@@ -547,7 +547,7 @@ trait AJAX_DOM
 	 */
 	final public function close($sel = null)
 	{
-		$this->response['close'] = (string)$sel;
+		$this->response['close'] = "$sel";
 		return $this;
 	}
 
@@ -560,11 +560,7 @@ trait AJAX_DOM
 	 */
 	final public function enable($sel = null)
 	{
-		return $this->attributes(
-			$sel,
-			'disabled',
-			false
-		);
+		return $this->attributes($sel, 'disabled', false);
 	}
 
 	/**
@@ -577,11 +573,7 @@ trait AJAX_DOM
 	 */
 	final public function disable($sel = null)
 	{
-		return $this->attributes(
-			$sel,
-			'disabled',
-			true
-		);
+		return $this->attributes("$sel", 'disabled', true);
 	}
 
 	/**
@@ -595,11 +587,7 @@ trait AJAX_DOM
 
 	final public function hidden($sel = null, $hide = true)
 	{
-		return $this->attributes(
-			$sel,
-			'hidden',
-			$hide
-		);
+		return $this->attributes("$sel", 'hidden', $hide);
 	}
 
 	/**
@@ -620,7 +608,7 @@ trait AJAX_DOM
 			$this->response['dataset'] = [];
 		}
 
-		$this->response['dataset'][(string)$sel][(string)$name] = (string)$value;
+		$this->response['dataset']["$sel"]["$name"] = "$value";
 
 		return $this;
 	}
@@ -635,11 +623,11 @@ trait AJAX_DOM
 	 */
 	final public function style($sel = null, $property = null, $value = null)
 	{
-		if (!is_array($this->response['style'])) {
+		if (! is_array($this->response['style'])) {
 			$this->response['style'] = [];
 		}
 
-		$this->response['style'][(string)$sel][(string)$property] = (string)$value;
+		$this->response['style']["$sel"]["$property"] = "$value";
 		return $this;
 	}
 
@@ -656,11 +644,7 @@ trait AJAX_DOM
 			$id = preg_replace(['/\s/', '/[\W]/'], ['_', null], trim($id));
 		}
 
-		return $this->attributes(
-			(string)$sel,
-			'id',
-			$id
-		);
+		return $this->attributes("$sel", 'id', $id);
 	}
 
 	/**
@@ -676,7 +660,7 @@ trait AJAX_DOM
 	 */
 	final public function serverEvent($uri = null)
 	{
-		$this->response['serverEvent'] = (string)$uri;
+		$this->response['serverEvent'] = "$uri";
 		return $this;
 	}
 
