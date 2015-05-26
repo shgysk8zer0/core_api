@@ -75,7 +75,7 @@ trait URL
 					? $_SERVER['PHP_AUTH_PW']
 					: null,
 				'path' => array_key_exists('REQUEST_URI', $_SERVER)
-					? $_SERVER['REQUEST_URI']
+					? strtok($_SERVER['REQUEST_URI'], '?')
 					: '/',
 				'query' => array_key_exists('QUERY_STRING', $_SERVER)
 					? $_SERVER['QUERY_STRING']
