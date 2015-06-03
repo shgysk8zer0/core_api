@@ -37,17 +37,23 @@ trait DOMElement
 	{
 		if (substr($name, 0, 1) === '@') {
 			$this->setAttribute(substr($name, 1), $value);
-		} elseif (substr($name, 0, 1) === '!') {
-			$this->appendChild($this->ownerDocument->createComment(substr($name, 1)));
+		} elseif (substr($name, 0, 1) === '!' and is_string($value)) {
+			$this->appendChild($this->ownerDocument->createComment($value));
 		} else {
-			if (is_object($value) and $value instanceof \DOMNode) {
+			if (! is_string($name)) {
+				if (is_string($value)) {
+					$this->appendChild($this->ownerDocument->createTextNode($value));
+				} elseif (is_object($value) and $value instanceof \DOMNode) {
+					$this->appendChild($value);
+				}
+			} elseif (is_object($value) and $value instanceof \DOMNode) {
 				$this->appendChild(new self($name))->appendChild($value);
 			} elseif (is_array($value)) {
 				$node = $this->appendChild(new self($name));
 				array_map(
 					function($key, $val) use (&$node)
 					{
-						$node->$key = $val;
+						$node->__set($key, $val);
 					},
 					array_keys($value),
 					array_values($value)
