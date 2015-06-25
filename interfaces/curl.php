@@ -90,7 +90,7 @@ interface cURL
 	 * @param array $options An array specifying which options to set and their values.
 	 * @return self
 	 */
-	public function curlSetOptArry(array $options = array());
+	public function curlSetOptArray(array $options = array());
 
 	/**
 	 * URL encodes the given string
