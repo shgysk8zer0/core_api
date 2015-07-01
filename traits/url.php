@@ -2,6 +2,7 @@
 /**
  * @author Chris Zuber <shgysk8zer0@gmail.com>
  * @package shgysk8zer0\Core_API
+ * @subpackage Traits
  * @version 1.0.0
  * @copyright 2015, Chris Zuber
  * @license http://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
@@ -25,6 +26,7 @@ namespace shgysk8zer0\Core_API\Traits;
  */
 trait URL
 {
+	use Ports;
 	/**
 	 * Array of default data for URL
 	 *
@@ -46,36 +48,6 @@ trait URL
 	 *
 	 * @var array
 	 */
-	private $_reserved_ports = array(
-		'HTTP' => 80,
-		'HTTPS' => 443,
-		'FTP-data' => 20,
-		'FTP' => 21,
-		'SSH' => 22,
-		'Telnet' => 23,
-		'WHOIS' => 43,
-		'DNS' => 53,
-		'GOPHER' => 70,
-		'POP3' => 110,
-		'Ident' => 113,
-		'IMAP' => 143,
-		'IRC' => 194,
-		'IMAP-3' => 220,
-		'SMTPS' => 465,
-		'SMTP' => 587,
-		'Flash' => 843,
-		'rsync' => 873,
-		'Samba' => 901,
-		'SharePoint' => 987,
-		'FTPS-data' => 989,
-		'FTPS' => 990,
-		'NAS' => 991,
-		'TELNETS' => 993,
-		'IRCS' => 994,
-		'POP3S' => 995,
-		'IMAPS' => 993,
-		'MySQL' => 3306
-	);
 
 	/**
 	 * Break  URL into components, setting missing values to components from
@@ -88,7 +60,6 @@ trait URL
 	 */
 	final protected function parseURL()
 	{
-
 		$this->_parseRequestURL();
 
 		$args = array_map('urldecode', array_filter(func_get_args(), 'is_string'));
@@ -142,11 +113,7 @@ trait URL
 				$url .= 'localhost';
 			}
 		}
-		if (
-			@is_int($this->url_data['port'])
-			and ! in_array($this->url_data['port'], $this->_reserved_ports)
-			and in_array('port', $components)
-		) {
+		if (is_int($this->url_data['port']) and ! $this->isDefaultPort($this->url_data['scheme'], $this->url_data['port'])) {
 			$url .= ":{$this->url_data['port']}";
 		}
 		if (in_array('path', $components)) {
