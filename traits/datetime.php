@@ -41,4 +41,21 @@ trait DateTime
 	{
 		return $this->format($this->format);
 	}
+
+	/**
+	 * Attempts to get timezone with fallback to default, which in turn defaults to UTC
+	 *
+	 * @param mixed $timezone   Most likely a string or null, but could be a DateTimeZone
+	 * @return DateTimeZone
+	 */
+	final protected function _getTimeZone($timezone = null)
+	{
+		if ($timezone = strtoupper($timezone) and defined("\\DateTimeZone::{$timezone}")) {
+			$timezone = new \DateTimeZone($timezone);
+		} elseif (! ($timezone instanceof \DateTimeZone)) {
+			@date_default_timezone_set(date_default_timezone_get());
+			$timezone = new \DateTimeZone(date_default_timezone_get());
+		}
+		return $timezone;
+	}
 }
