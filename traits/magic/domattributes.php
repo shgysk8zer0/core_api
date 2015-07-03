@@ -34,7 +34,7 @@ trait DOMAttributes
 	 * @param  string $tagname The type of element to create
 	 * @return void
 	 */
-	protected function _createSelf($tagname)
+	final protected function _createSelf($tagname)
 	{
 		$dom = new \DOMDocument('1.0', 'UTF-8');
 		parent::__construct($tagname);
@@ -50,7 +50,7 @@ trait DOMAttributes
 	 * @see https://secure.php.net/manual/en/domelement.setattribute.php
 	 * @example $this->class = 'classname'
 	 */
-	public function __set($name, $value)
+	final public function __set($name, $value)
 	{
 		$this->setAttribute($name, $value);
 	}
@@ -63,7 +63,7 @@ trait DOMAttributes
 	 * @see https://secure.php.net/manual/en/domelement.getattribute.php
 	 * @example echo $this->glass // Echoes 'classname'
 	 */
-	public function __get($name)
+	final public function __get($name)
 	{
 		return $this->getAttribute($name);
 	}
@@ -76,7 +76,7 @@ trait DOMAttributes
 	 * @see https://secure.php.net/manual/en/domelement.hasattribute.php
 	 * @example isset($element->class)
 	 */
-	public function __isset($name)
+	final public function __isset($name)
 	{
 		return $this->hasAttribute($name);
 	}
@@ -89,7 +89,7 @@ trait DOMAttributes
 	 * @see https://secure.php.net/manual/en/domelement.removeattribute.php
 	 * @example unset($element->class)
 	 */
-	public function __unset($name)
+	final public function __unset($name)
 	{
 		$this->removeAttribute($name);
 	}
@@ -102,7 +102,7 @@ trait DOMAttributes
 	 * @see https://secure.php.net/manual/en/domdocument.savehtml.php
 	 * @example echo $element // Echoes '<iframe src="" ...></iframe>'
 	 */
-	public function __toString()
+	final public function __toString()
 	{
 		return $this->ownerDocument->saveHTML($this);
 	}
