@@ -26,19 +26,25 @@ namespace shgysk8zer0\Core_API\Traits\Magic;
  */
 trait DOMAttributes
 {
+	use HTML_String;
 	/**
 	 * Creates a new DOMDocument and constructs parent/DOMElement with the tagname
 	 * This is should be called when the class is constructed, since a DOMElement
-	 * without an ownerDocument cannot be used
+	 * without an ownerDocument cannot be used.
 	 *
-	 * @param  string $tagname The type of element to create
+	 * Also accepts an optional array of attributes to set on the DOMElement
+	 * after it is appended to a DOMDocument.
+	 *
+	 * @param  string $tagname      The type of element to create
+	 * @param  array  $attributes   Array of attributes to set on DOMElement
 	 * @return void
 	 */
-	final protected function _createSelf($tagname)
+	final protected function _createSelf($tagname, array $attributes = array())
 	{
 		$dom = new \DOMDocument('1.0', 'UTF-8');
 		parent::__construct($tagname);
 		$dom->appendChild($this);
+		array_map([$this, 'setAttribute'], array_keys($attributes), array_values($attributes));
 	}
 
 	/**
@@ -92,18 +98,5 @@ trait DOMAttributes
 	final public function __unset($name)
 	{
 		$this->removeAttribute($name);
-	}
-
-	/**
-	 * Returns the <iframe>'s HTML as a string
-	 *
-	 * @param void
-	 * @return string HTML for the <iframe>
-	 * @see https://secure.php.net/manual/en/domdocument.savehtml.php
-	 * @example echo $element // Echoes '<iframe src="" ...></iframe>'
-	 */
-	final public function __toString()
-	{
-		return $this->ownerDocument->saveHTML($this);
 	}
 }
