@@ -26,7 +26,6 @@ namespace shgysk8zer0\Core_API\Traits\Magic;
  */
 trait DOMAttributes
 {
-	use HTML_String;
 	/**
 	 * Creates a new DOMDocument and constructs parent/DOMElement with the tagname
 	 * This is should be called when the class is constructed, since a DOMElement
