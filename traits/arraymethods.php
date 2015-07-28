@@ -121,7 +121,7 @@ trait ArrayMethods
 		$args = func_get_args();
 		array_unshift($args, $this->{self::MAGIC_PROPERTY});
 		$arr = call_user_func_array('array_intersect', $args);
-		return self::createFromArray($arr);
+		return static::createFromArray($arr);
 	}
 
 	/**
@@ -155,9 +155,9 @@ trait ArrayMethods
 	final public function keys($search_value = null, $strict = false)
 	{
 		if (isset($search_value)) {
-			return array_keys($this->{self::MAGIC_PROPERTY}, $search_value, $strict);
+			return static::createFromArray(array_keys($this->{self::MAGIC_PROPERTY}, $search_value, $strict));
 		} else {
-			return array_keys($this->{self::MAGIC_PROPERTY});
+			return static::createFromArray(array_keys($this->{self::MAGIC_PROPERTY}));
 		}
 	}
 
@@ -168,7 +168,7 @@ trait ArrayMethods
 	 */
 	final public function values()
 	{
-		return array_values($this->{self::MAGIC_PROPERTY});
+		return static::createFromArray(array_values($this->{self::MAGIC_PROPERTY}));
 	}
 
 	/**
@@ -195,7 +195,7 @@ trait ArrayMethods
 		$args = func_get_args();
 		array_unshift($this->{self::MAGIC_PROPERTY}, $args);
 		$arr = call_user_func_array('array_replace', $args);
-		return self::createFromArray($arr);
+		return static::createFromArray($arr);
 	}
 
 	/**
@@ -324,7 +324,15 @@ trait ArrayMethods
 	 */
 	final public function reduce(Callable $callback, $initial = null)
 	{
-		return array_reduce($this->{self::MAGIC_PROPERTY}, $callback, $initial);
+		$result = array_reduce($this->{self::MAGIC_PROPERTY}, $callback, $initial);
+		
+		if (is_array($result)) {
+			return static::createFromArray($result);
+		} elseif (is_object($result)) {
+			return static::createFromObject($result);
+		} else {
+			return $result;
+		}
 	}
 
 	/**
