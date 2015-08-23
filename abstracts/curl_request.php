@@ -54,6 +54,13 @@ abstract class cURL_Request implements API\Interfaces\cURL
 		'text/plain'
 	];
 
+	/**
+	 * Array for containg and woring with request headers
+	 *
+	 * @var array
+	 */
+	private $headers = array();
+
 	public $parse_response = true;
 
 	/**
