@@ -36,8 +36,32 @@ trait DOMImportHTML
 	{
 		$tmp_doc = new \DOMDocument('1.0', 'UTF-8');
 		$tmp_doc->loadHTML($html);
+		$nodes = array();
 		foreach ($tmp_doc->documentElement->childNodes as $node) {
+			array_push($nodes, $node);
 			$this->appendChild($this->ownerDocument->importNode($node, true));
+		}
+		return $nodes;
+	}
+
+	final public function appendAll()
+	{
+		return array_map([$this, 'append'], func_get_args());
+	}
+
+	final public function append($content)
+	{
+		if ($content instanceof \DOMNode) {
+			return $this->appendChild(isset($content->ownerDocument)
+				? $this->ownerDocument->importNode($content, true)
+				: $content
+			);
+		} elseif (is_string($content)) {
+			return $this->importHTML($content);
+		} else {
+			throw new \InvalidArgumentException(
+				sprintf('%s expected either a DOMNode or string, %s given', __METHOD__, gettype($content))
+			);
 		}
 	}
 }
