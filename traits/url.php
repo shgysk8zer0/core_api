@@ -32,7 +32,7 @@ trait URL
 	 *
 	 * @var array
 	 */
-	protected $url_data = array(
+	protected $_url_data = array(
 		'scheme' => 'http',
 		'host' => 'localhost',
 		'port' => 80,
@@ -44,32 +44,79 @@ trait URL
 	);
 
 	/**
-	 * Array of reserved port numbers, such as HTTP, HTTPS, etc
-	 *
-	 * @var array
-	 */
-
-	/**
 	 * Break  URL into components, setting missing values to components from
 	 * current calculated URL using $_SERVER. Does not set user, pass, or port,
 	 * as those are likely to be either security risks or unnecessary.
 	 *
 	 * @param string $url A URL string
-	 * @return self
+	 * @return array
 	 * @see http://php.net/manual/en/function.parse-url.php
 	 */
-	final protected function parseURL()
+	final public static function parseURL($url = null)
 	{
-		$this->_parseRequestURL();
+		$data = parse_url(is_string($url) ? $url : static::getRequestURL());
+		if ($data === false) {
+			trigger_error(sprintf('Error parsing URL in %s', __METHOD__));
+			return array();
+		}
+		if (! array_key_exists('port', $data)) {
+			$data['port'] = $_SERVER['SERVER_PORT'];
+		}
+		if (! array_key_exists('user', $data) and array_key_exists('PHP_AUTH_USER', $_SERVER)) {
+			$data['user'] = $_SERVER['PHP_AUTH_USER'];
+		}
+		if (! array_key_exists('pass', $data) and array_key_exists('PHP_AUTH_PW', $_SERVER)) {
+			$data['pass'] = $_SERVER['PHP_AUTH_PW'];
+		}
+		if (array_key_exists('query', $data)) {
+			parse_str($data['query'], $data['query']);
+		}
+		return $data;
+	}
 
-		$args = array_map('urldecode', array_filter(func_get_args(), 'is_string'));
-		$args = array_reverse($args);
+	/**
+	 * URL encodes a string
+	 *
+	 * @param string $str string to encode
+	 * @return string     the encoded string
+	 */
+	final public static function URLEncode($str)
+	{
+		return urlencode($str);
+	}
 
-		$this->url_data = array_reduce($args, [$this, '_buildFromURLs'], $this->url_data);
+	/**
+	 * URL decodes a string
+	 *
+	 * @param string $str the string to decode
+	 * @return string     the decoded string
+	 */
+	final public static function URLDecode($str)
+	{
+		return urldecode($str);
+	}
 
-		$this->_normalizeURL();
+	/**
+	 * Static method to get the request URL from $_SERVER vars
+	 *
+	 * @param void
+	 * @return string the URL string built from $_SERVER
+	 */
+	final public static function getRequestURL()
+	{
+		$url = "{$_SERVER['REQUEST_SCHEME']}://";
+		if (array_key_exists('PHP_AUTH_USER', $_SERVER)) {
+			$url .= static::URLEncode($_SERVER['PHP_AUTH_USER']);
+			if (array_key_exists('PHP_AUTH_PW', $_SERVER)) {
+				$url .= ':' . static::URLEncode($_SERVER['PHP_AUTH_PW']);
+			}
+			$url .= '@';
+		}
 
-		return $this;
+		$url .= $_SERVER['HTTP_HOST'];
+		$url .= $_SERVER[array_key_exists('REDIRECT_URL', $_SERVER) ? 'REDIRECT_URL' : 'REQUEST_URI'];
+
+		return $url;
 	}
 
 	/**
@@ -91,125 +138,56 @@ trait URL
 	{
 		$url = '';
 		if (in_array('scheme', $components)) {
-			if (is_string($this->url_data['scheme'])) {
-				$url .= rtrim($this->url_data['scheme'], ':/') . '://';
+			if (is_string($this->_url_data['scheme'])) {
+				$url .= rtrim($this->_url_data['scheme'], ':/') . '://';
 			} else {
 				$url .= 'http://';
 			}
 		}
 
-		if (@is_string($this->url_data['user']) and in_array('user', $components)) {
-			$url .= urlencode($this->url_data['user']);
-			if (@is_string($this->url_data['pass']) and in_array('pass', $components)) {
-				$url .= ':' . urlencode($this->url_data['pass']);
+		if (@is_string($this->_url_data['user']) and in_array('user', $components)) {
+			$url .= urlencode($this->_url_data['user']);
+			if (@is_string($this->_url_data['pass']) and in_array('pass', $components)) {
+				$url .= ':' . urlencode($this->_url_data['pass']);
 			}
 			$url .= '@';
 		}
 
 		if (in_array('host', $components)) {
-			if (@is_string($this->url_data['host'])) {
-				$url .= $this->url_data['host'];
+			if (@is_string($this->_url_data['host'])) {
+				$url .= $this->_url_data['host'];
 			} else {
 				$url .= 'localhost';
 			}
 		}
-		if (is_int($this->url_data['port']) and ! $this->isDefaultPort($this->url_data['scheme'], $this->url_data['port'])) {
-			$url .= ":{$this->url_data['port']}";
+		if (
+			is_int($this->_url_data['port'])
+			and ! $this->isDefaultPort($this->_url_data['scheme'], $this->_url_data['port'])
+		) {
+			$url .= ":{$this->_url_data['port']}";
 		}
 		if (in_array('path', $components)) {
-			if (@is_string($this->url_data['path'])) {
-				$url .= '/' . ltrim($this->url_data['path'], '/');
+			if (@is_string($this->_url_data['path'])) {
+				$url .= '/' . ltrim($this->_url_data['path'], '/');
 			} else {
 				$url .= '/';
 			}
 		}
 
 		if(
-			isset($this->url_data['query'])
-			and ! empty($this->url_data['query'])
+			isset($this->_url_data['query'])
+			and ! empty($this->_url_data['query'])
 			and in_array('query', $components)
 		) {
-			if (@ is_array($this->url_data['query'])) {
-				$url .= '?' . http_build_query($this->url_data['query']);
-			} elseif (@is_string($this->url_data['query'])) {
-				$url .= '?' . ltrim($this->url_data['query'], '?');
+			if (@ is_array($this->_url_data['query'])) {
+				$url .= '?' . http_build_query($this->_url_data['query']);
+			} elseif (@is_string($this->_url_data['query'])) {
+				$url .= '?' . ltrim($this->_url_data['query'], '?');
 			}
 		}
-		if (@is_string($this->url_data['fragment']) and in_array('fragment', $components)) {
-			$url .= '#' . ltrim($this->url_data['fragment'], '#');
+		if (@is_string($this->_url_data['fragment']) and in_array('fragment', $components)) {
+			$url .= '#' . ltrim($this->_url_data['fragment'], '#');
 		}
 		return $url;
-	}
-
-	/**
-	 * Starts the URL data from info taken from $_SERVER
-	 *
-	 * @param void
-	 * @return void
-	 */
-	private function _parseRequestURL()
-	{
-		if (array_key_exists('REQUEST_SCHEME', $_SERVER)) {
-			$this->url_data['scheme'] = $_SERVER['REQUEST_SCHEME'];
-		}
-
-		if (array_key_exists('HTTP_HOST', $_SERVER)) {
-			$this->url_data['host'] = $_SERVER['HTTP_HOST'];
-		}
-
-		if (array_key_exists('SERVER_PORT', $_SERVER)) {
-			$this->url_data['port'] = (int)$_SERVER['SERVER_PORT'];
-		}
-
-		if (array_key_exists('PHP_AUTH_USER', $_SERVER)) {
-			$this->url_data['pass'] = $_SERVER['PHP_AUTH_PW'];
-		}
-
-		if (array_key_exists('PHP_AUTH_PW', $_SERVER)) {
-			$this->url_data['pass'] = $_SERVER['PHP_AUTH_PW'];
-		}
-
-		if (array_key_exists('REQUEST_URI', $_SERVER)) {
-			$this->url_data['path'] = strtok($_SERVER['REQUEST_URI'], '?');
-		}
-
-		if (array_key_exists('QUERY_STRING', $_SERVER)) {
-			$this->url_data['query'] = $_SERVER['QUERY_STRING'];
-		}
-	}
-
-	/**
-	 * Parses and merges arrays of URL data
-	 *
-	 * @param  array  $parsed Array containing data, as from parse_url
-	 * @param  string $url    The current URL to parse
-	 *
-	 * @return array          The origiinal $parsed array, hopefully with
-	 */
-	private function _buildFromURLs(array $parsed, $url)
-	{
-		if (! is_string($url)) {
-			throw new \InvalidArgumentException(sprintf('%s expects a URL string. Got %s instead', __METHOD__, gettype($url)));
-		} elseif ($url = parse_url($url)) {
-			$parsed = array_merge($parsed, array_filter($url));
-		} else {
-			throw new \InvalidArgumentException(sprintf('Error parsing URL "%s" in %s', func_get_arg(1), __METHOD__));
-		}
-		return $parsed;
-	}
-
-	/**
-	 * Makes slashes in path consisten, and converts query to an array
-	 *
-	 * @param void
-	 * @return void
-	 */
-	private function _normalizeURL()
-	{
-		if ($this->url_data['path'] !== '/') {
-			$this->url_data['path'] = '/' . trim($this->url_data['path'], '/');
-		}
-
-		parse_str($this->url_data['query'], $this->url_data['query']);
 	}
 }
