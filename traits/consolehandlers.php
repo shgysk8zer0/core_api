@@ -27,6 +27,7 @@ namespace shgysk8zer0\Core_API\Traits;
 trait ConsoleHandlers
 {
 	abstract protected function _addRow(array $logs, $backtrace, $type);
+
 	/**
 	 * logs a PHP error to the console as an error
 	 *
@@ -67,5 +68,31 @@ trait ConsoleHandlers
 			$this->_formatLocation($e->getFile(), $e->getLine()),
 			self::WARN
 		);
+	}
+
+	/**
+	 * Sets the reportError method as the error handler
+	 *
+	 * @param  int    $lvl The E_* level to report errors for
+	 *
+	 * @return self
+	 */
+	final public function asErrorHandler($lvl = E_ALL)
+	{
+		set_error_handler([$this, 'reportError'], $lvl);
+		return $this;
+	}
+
+	/**
+	 * Set reportException method as the exception handler
+	 *
+	 * @param void
+	 *
+	 * @return self
+	 */
+	final public function asExceptionHandler()
+	{
+		set_exception_handler([$this, 'reportException']);
+		return $this;
 	}
 }
