@@ -126,20 +126,26 @@ abstract class Console implements \shgysk8zer0\Core_API\Interfaces\Console
 	}
 
 	/**
-	 * Set and send custom header only when class is destroyed
+	 * [_sendLogHeader description]
+	 *
+	 * @param void
+	 * @return void
 	 */
-	public function __destruct()
-	{
-		header(self::HEADER_NAME . ':' . base64_encode($this));
+	final public function sendLogHeader() {
+		if (! headers_sent()) {
+			header(self::HEADER_NAME . ':' . $this->_encodeLogHeader());
+		} else {
+			//
+		}
 	}
 
 	/**
-	 * Get log data as a UTF-8 and JSON encoded string
+	 * [_encodeLogHeader description]
 	 *
-	 * @return string Encoded contents of $this->_json
+	 * @param void
+	 * @return string [description]
 	 */
-	public function __toString()
-	{
-		return utf8_encode(json_encode($this->_json));
+	final protected function _encodeLogHeader() {
+		return base64_encode(utf8_encode(json_encode($this->_json)));
 	}
 }
