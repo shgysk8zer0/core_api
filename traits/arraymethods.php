@@ -27,6 +27,30 @@ namespace shgysk8zer0\Core_API\Traits;
  */
 trait ArrayMethods
 {
+	final public static function of()
+	{
+		return statis::createFromArray(func_get_args());
+	}
+
+	final public static function from($items, Callable $map_callback = null)
+	{
+		if (is_array($items)) {
+			$arr = $items;
+		} elseif ($items instanceof \Transversable) {
+			$arr = [];
+			foreach ($items as $item) {
+				array_push($arr, $item);
+			}
+		} elseif (is_object($items)) {
+			$arr = get_object_vars($items);
+		} else {
+			throw new \InvalidArgumentException(sprintf('Expected an array-like object but got a %s', gettype($items)));
+		}
+		if (isset($map_callback)) {
+			$arr = array_map($map_callback, $arr);
+		}
+		return static::createFromArray($arr);
+	}
 	/**
 	 * Push one or more elements onto the end of array
 	 * @param mixed ...
@@ -325,14 +349,8 @@ trait ArrayMethods
 	final public function reduce(Callable $callback, $initial = null)
 	{
 		$result = array_reduce($this->{self::MAGIC_PROPERTY}, $callback, $initial);
-		
-		if (is_array($result)) {
-			return static::createFromArray($result);
-		} elseif (is_object($result)) {
-			return static::createFromObject($result);
-		} else {
-			return $result;
-		}
+
+		return static::from($result);
 	}
 
 	/**
@@ -355,11 +373,4 @@ trait ArrayMethods
 	{
 		return static::createFromArray(get_object_vars($object));
 	}
-
-	/**
-	 * Creates a new instance from an array
-	 * @param  array  $array An array
-	 * @return [type]        New instance of class with array data created from $array
-	 */
-	abstract public static function createFromArray(array $array);
 }
