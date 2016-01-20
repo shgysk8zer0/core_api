@@ -311,7 +311,11 @@ trait ArrayMethods
 	 */
 	final public function map(Callable $callback)
 	{
-		$arr = array_map($callback, $this->{self::MAGIC_PROPERTY});
+		$arr = array_map(
+			$callback,
+			array_values($this->{self::MAGIC_PROPERTY}),
+			array_keys($this->{self::MAGIC_PROPERTY})
+		);
 		return static::createFromArray($arr);
 	}
 
