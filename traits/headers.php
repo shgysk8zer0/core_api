@@ -33,7 +33,7 @@ trait Headers
 	 * @param void
 	 * @return array Headers array
 	 */
-	final protected function _readHeaders()
+	final protected static function _readHeaders()
 	{
 		if (empty(static::$_request_headers)) {
 			$headers = getallheaders();
@@ -50,7 +50,7 @@ trait Headers
 	 * @param  string $key
 	 * @return string      Value of the header
 	 */
-	final public static function getHeader($key)
+	final public function getHeader($key)
 	{
 		if (static::hasHeader($key)) {
 			static::_cleanHeader($key);
@@ -64,7 +64,7 @@ trait Headers
 	 * @param  string  $key Name of header to check for
 	 * @return boolean      If it was sent
 	 */
-	final public function hasHeader($key)
+	final public static function hasHeader($key)
 	{
 		static::_cleanHeader($key);
 		return array_key_exists($key, static::_readHeaders());
