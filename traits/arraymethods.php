@@ -29,7 +29,7 @@ trait ArrayMethods
 {
 	final public static function of()
 	{
-		return statis::createFromArray(func_get_args());
+		return static::createFromArray(func_get_args());
 	}
 
 	final public static function from($items, Callable $map_callback = null)
