@@ -3,7 +3,7 @@
  * @author Chris Zuber <shgysk8zer0@gmail.com>
  * @package shgysk8zer0\Core_API
  * @version 1.0.0
- * @copyright 2015, Chris Zuber
+ * @copyright 2016, Chris Zuber
  * @license http://opensource.org/licenses/GPL-3.0 GNU General Public License, version 3 (GPL-3.0)
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,7 +28,7 @@ namespace shgysk8zer0\Core_API\Traits\Magic;
 trait Iterator
 {
 	/**
-	 * Gets the value @ $_iterator_position
+	 * Returns the value at the current position
 	 *
 	 * @param void
 	 * @return mixed Whatever the current value is
@@ -39,7 +39,7 @@ trait Iterator
 	}
 
 	/**
-	 * Returns the original key (not $_iterator_position) at the current position
+	 * Returns the key (not index) at current position
 	 *
 	 * @param void
 	 * @return mixed  Probably a string, but could be an integer.
@@ -50,7 +50,7 @@ trait Iterator
 	}
 
 	/**
-	 * Increment $_iterator_position
+	 * Increment to the next position in the array
 	 *
 	 * @param void
 	 * @return void
@@ -61,7 +61,7 @@ trait Iterator
 	}
 
 	/**
-	 * Reset $_iterator_position to 0
+	 * Reset to the beginning of the array
 	 *
 	 * @param void
 	 * @return void
@@ -72,7 +72,7 @@ trait Iterator
 	}
 
 	/**
-	 * Checks if data is set for current $_iterator_position
+	 * Checks that the end of the array has not been exceeded
 	 *
 	 * @param void
 	 * @return bool Whether or not there is data set at current position
