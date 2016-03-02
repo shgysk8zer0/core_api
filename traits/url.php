@@ -59,8 +59,25 @@ trait URL
 			trigger_error(sprintf('Error parsing URL in %s', __METHOD__));
 			return array();
 		}
+		if (is_null($_SERVER)) {
+			$_SERVER = array();
+		}
+		if (! array_key_exists('scheme', $data)) {
+			$data['scheme'] = array_key_exists('REQUEST_SCHEME', $_SERVER) ? $_SERVER['REQUEST_SCHEME'] : 'http';
+		}
+		if (! array_key_exists('host', $data)) {
+			$data['host'] = array_key_exists('SERVER_NAME', $_SERVER) ? $_SERVER['SERVER_NAME'] : 'localhost';
+		}
 		if (! array_key_exists('port', $data)) {
-			$data['port'] = $_SERVER['SERVER_PORT'];
+			if (array_key_exists('SERVER_PORT', $data)) {
+				$data['port'] = $_SERVER['SERVER_PORT'];
+			} else {
+				$scheme = strtoupper($data['scheme']);
+				if (defined("\shgysk8zer0\Core_API\Abstracts\Ports::{$scheme}")) {
+					$data['port'] = constant("\shgysk8zer0\Core_API\Abstracts\Ports::{$scheme}");
+				}
+				unset($scheme);
+			}
 		}
 		if (! array_key_exists('user', $data) and array_key_exists('PHP_AUTH_USER', $_SERVER)) {
 			$data['user'] = $_SERVER['PHP_AUTH_USER'];
@@ -71,12 +88,9 @@ trait URL
 		if (array_key_exists('query', $data)) {
 			parse_str($data['query'], $data['query']);
 		}
-   if (! array_key_exists('host', $data)) {
-    $data['host'] = @array_key_exists('SERVER_NAME', $_SERVER) ? $_SERVER['SERVER_NAME'] : 'localhost';
-   }
 		return $data;
 	}
-  
+
 	/**
 	 * URL encodes a string
 	 *
