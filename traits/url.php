@@ -71,9 +71,12 @@ trait URL
 		if (array_key_exists('query', $data)) {
 			parse_str($data['query'], $data['query']);
 		}
+   if (! array_key_exists('host', $data)) {
+    $data['host'] = @array_key_exists('SERVER_NAME', $_SERVER) ? $_SERVER['SERVER_NAME'] : 'localhost';
+   }
 		return $data;
 	}
-
+  
 	/**
 	 * URL encodes a string
 	 *
