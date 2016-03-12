@@ -36,7 +36,7 @@ trait Headers
 	final protected static function _readHeaders()
 	{
 		if (empty(static::$_request_headers)) {
-			$headers = getallheaders();
+			$headers = function_exists('getallheaders') ? getallheaders() : [];
 			$keys = array_keys($headers);
 			array_walk($keys, [__CLASS__, '_cleanHeader']);
 			static::$_request_headers = array_combine($keys, array_values($headers));
@@ -79,15 +79,17 @@ trait Headers
 	 */
 	final public static function setHeader($key, $value)
 	{
-		static::_cleanHeader($key);
-		if (is_array($value) or (is_object($value) and $value = get_object_vars($value))) {
-			$value = join('; ', array_map(
-				[__CLASS__, '_encodeHeader'],
-				array_keys($value),
-				array_values($value)
-			));
+		if (function_exists('header')) {
+			static::_cleanHeader($key);
+			if (is_array($value) or (is_object($value) and $value = get_object_vars($value))) {
+				$value = join('; ', array_map(
+					[__CLASS__, '_encodeHeader'],
+					array_keys($value),
+					array_values($value)
+				));
+			}
+			header("$key: $value");
 		}
-		header("$key: $value");
 	}
 
 	/**
@@ -98,8 +100,10 @@ trait Headers
 	 */
 	final public static function removeHeader($key)
 	{
-		static::_cleanHeader($key);
-		header_remove($key);
+		if (function_exists('header_remove')) {
+			static::_cleanHeader($key);
+			header_remove($key);
+		}
 	}
 
 	/**

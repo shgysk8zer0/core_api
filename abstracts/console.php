@@ -122,7 +122,9 @@ abstract class Console implements \shgysk8zer0\Core_API\Interfaces\Console
 		$this->_timestamp = version_compare(PHP_VERSION, '5.1.0', '>=')
 			? $_SERVER['REQUEST_TIME']
 			: time();
-		$this->_json['request_uri'] = $_SERVER['REQUEST_URI'];
+		$this->_json['request_uri'] = array_key_exists('REQUEST_URI', $_SERVER)
+			? $_SERVER['REQUEST_URI']
+			: null;
 	}
 
 	/**
