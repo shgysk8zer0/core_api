@@ -23,7 +23,7 @@ namespace shgysk8zer0\Core_API\Traits;
 
 /**
  * Provides a public static method and protected static property for
- * crreating and saving instances of a class
+ * creating and saving instances of a class
  */
 trait GetInstance
 {
