@@ -121,7 +121,9 @@ trait URL
 	 */
 	final public static function getRequestURL()
 	{
-		$url = "{$_SERVER['REQUEST_SCHEME']}://";
+		$url = array_key_exists('REQUEST_SCHEME', $_SERVER)
+			? "{$_SERVER['REQUEST_SCHEME']}://"
+			: 'http://';
 		if (array_key_exists('PHP_AUTH_USER', $_SERVER)) {
 			$url .= static::URLEncode($_SERVER['PHP_AUTH_USER']);
 			if (array_key_exists('PHP_AUTH_PW', $_SERVER)) {
