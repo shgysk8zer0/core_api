@@ -41,4 +41,14 @@ trait GetInstance
 		}
 		return self::$_instance;
 	}
+
+	/**
+	 * gets instance of this class and returns a clone
+	 *
+	 * @return clone self
+	 */
+	public static function getClone()
+	{
+		return clone static::getInstance();
+	}
 }
