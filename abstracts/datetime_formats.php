@@ -32,7 +32,7 @@ namespace shgysk8zer0\Core_API\Abstracts;
  * @uses \DateTime
  */
 abstract class DateTime_Formats extends \DateTime
-implements \shgysk8zer0\Core_API\Interfaces\String, \DateTimeInterface
+implements \shgysk8zer0\Core_API\Interfaces\toString, \DateTimeInterface
 {
 	/**
 	 * Common textual date components

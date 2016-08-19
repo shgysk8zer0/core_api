@@ -113,7 +113,7 @@ trait DOMElement
 	{
 		if ($content instanceof \DOMNode) {
 			$this->appendChild($content);
-		} elseif (is_string($content) or $content instanceof \shgsk8zer0\Core_API\Interfaces\String) {
+		} elseif (is_string($content) or $content instanceof \shgsk8zer0\Core_API\Interfaces\toString) {
 			$fragment = $this->ownerDocument->createDocumentFragment();
 			$fragment->appendXML(str_replace('&nbsp;', ' ', $content));
 			$this->appendChild($fragment);

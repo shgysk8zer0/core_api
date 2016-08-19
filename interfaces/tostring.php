@@ -23,7 +23,7 @@ namespace shgysk8zer0\Core_API\Interfaces;
 /**
  * Not a useful interface, but it does allow typehinting to ensure compatibility
  */
-interface String
+interface toString
 {
 	/**
 	 * Method called whenever class object is used as a string
