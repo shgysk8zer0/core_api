@@ -21,6 +21,8 @@
  */
 namespace shgysk8zer0\Core_API\Traits;
 
+use \shgysk8zer0\Core\URLSearchParams as Params;
+
 /**
  * Dynamically build absolute URLs filling in current values for defaults
  */
@@ -39,7 +41,7 @@ trait URL
 		'user' => null,
 		'pass' => null,
 		'path' => '/',
-		'query' => array(),
+		'query' => null,
 		'fragment' => null
 	);
 
@@ -85,9 +87,7 @@ trait URL
 		if (! array_key_exists('pass', $data) and array_key_exists('PHP_AUTH_PW', $_SERVER)) {
 			$data['pass'] = $_SERVER['PHP_AUTH_PW'];
 		}
-		if (array_key_exists('query', $data)) {
-			parse_str($data['query'], $data['query']);
-		}
+		$data['query'] = new Params(array_key_exists('query', $data) ? $data['query'] : null);
 		return $data;
 	}
 
@@ -156,6 +156,7 @@ trait URL
 	))
 	{
 		$url = '';
+		$query = "{$this->query}";
 		if (in_array('scheme', $components)) {
 			if (is_string($this->_url_data['scheme'])) {
 				$url .= rtrim($this->_url_data['scheme'], ':/') . '://';
@@ -194,15 +195,9 @@ trait URL
 		}
 
 		if(
-			isset($this->_url_data['query'])
-			and ! empty($this->_url_data['query'])
-			and in_array('query', $components)
+			strlen($query) !== 0 and in_array('query', $components)
 		) {
-			if (@ is_array($this->_url_data['query'])) {
-				$url .= '?' . http_build_query($this->_url_data['query']);
-			} elseif (@is_string($this->_url_data['query'])) {
-				$url .= '?' . ltrim($this->_url_data['query'], '?');
-			}
+			$url .= "?$query";
 		}
 		if (@is_string($this->_url_data['fragment']) and in_array('fragment', $components)) {
 			$url .= '#' . ltrim($this->_url_data['fragment'], '#');
