@@ -26,88 +26,121 @@ trait Console
 	abstract function __toString();
 
 	/**
-	 * logs a variable to the console
-	 *
-	 * @param mixed $data,... unlimited OPTIONAL number of additional logs [...]
-	 * @return void
+	 * Magic call method for console
+	 * @param  string $method Log level to use ('log', 'error', ...)
+	 * @param  Array  $args   Things to log
+	 * @return self           Return `$this` to make chainable
 	 */
-	final public function log()
+	final public function __call($method, Array $args)
 	{
-		return $this->_log(self::LOG, func_get_args());
+		// Converts 'fooBar' into 'foo_Bar'
+		$method = preg_replace('/[A-Z]/', '_${0}', $method);
+		$method = strtoupper($method);
+		if (defined(__CLASS__ . "::{$method}")) {
+			$this->_log(constant(__CLASS__ . "::{$method}"), $args);
+		} else {
+			throw new \BadMethodCallException(sprintf(
+				'Unknown method: %s',
+				func_get_arg(0)
+			));
+		}
+		return $this;
 	}
 
 	/**
-	 * sends an info log
-	 *
-	 * @param mixed $data,... unlimited OPTIONAL number of additional logs [...]
-	 * @return void
+	 * Magic call method for console
+	 * @param  string $method Log level to use ('log', 'error', ...)
+	 * @param  Array  $args   Things to log
+	 * @return self           Return `$this` to make chainable
 	 */
-	final public function info()
+	final public static function __callStatic($method, Array $args)
 	{
-		return $this->_log(self::INFO, func_get_args());
+		return call_user_func_array([static::getInstance(), $method], $args);
 	}
 
-	/**
-	 * sends a table log
-	 *
-	 * @param string value
-	 */
-	final public function table()
-	{
-		return $this->_log(self::TABLE, func_get_args());
-	}
-
-	/**
-	* logs a warning to the console
-	*
-	* @param mixed $data,... unlimited OPTIONAL number of additional logs [...]
-	* @return void
-	*/
-	final public function warn()
-	{
-		return $this->_log(self::WARN, func_get_args());
-	}
-
-	/**
-	 * logs an error to the console
-	 *
-	 * @param mixed $data,... unlimited OPTIONAL number of additional logs [...]
-	 * @return void
-	 */
-	final public function error()
-	{
-		return $this->_log(self::ERROR, func_get_args());
-	}
-
-	/**
-	 * sends a group log
-	 *
-	 * @param string value
-	 */
-	final public function group()
-	{
-		return $this->_log(self::GROUP, func_get_args());
-	}
-
-	/**
-	 * sends a collapsed group log
-	 *
-	 * @param string value
-	 */
-	final public function groupCollapsed()
-	{
-		return $this->_log(self::GROUP_COLLAPSED, func_get_args());
-	}
-
-	/**
-	 * ends a group log
-	 *
-	 * @param string value
-	 */
-	public function groupEnd()
-	{
-		return $this->_log(self::GROUP_END, func_get_args());
-	}
+	// /**
+	//  * logs a variable to the console
+	//  *
+	//  * @param mixed $data,... unlimited OPTIONAL number of additional logs [...]
+	//  * @return void
+	//  */
+	// final public function log()
+	// {
+	// 	return $this->_log(self::LOG, func_get_args());
+	// }
+	//
+	// /**
+	//  * sends an info log
+	//  *
+	//  * @param mixed $data,... unlimited OPTIONAL number of additional logs [...]
+	//  * @return void
+	//  */
+	// final public function info()
+	// {
+	// 	return $this->_log(self::INFO, func_get_args());
+	// }
+	//
+	// /**
+	//  * sends a table log
+	//  *
+	//  * @param string value
+	//  */
+	// final public function table()
+	// {
+	// 	return $this->_log(self::TABLE, func_get_args());
+	// }
+	//
+	// /**
+	// * logs a warning to the console
+	// *
+	// * @param mixed $data,... unlimited OPTIONAL number of additional logs [...]
+	// * @return void
+	// */
+	// final public function warn()
+	// {
+	// 	return $this->_log(self::WARN, func_get_args());
+	// }
+	//
+	// /**
+	//  * logs an error to the console
+	//  *
+	//  * @param mixed $data,... unlimited OPTIONAL number of additional logs [...]
+	//  * @return void
+	//  */
+	// final public function error()
+	// {
+	// 	return $this->_log(self::ERROR, func_get_args());
+	// }
+	//
+	// /**
+	//  * sends a group log
+	//  *
+	//  * @param string value
+	//  */
+	// final public function group()
+	// {
+	// 	return $this->_log(self::GROUP, func_get_args());
+	// }
+	//
+	// /**
+	//  * sends a collapsed group log
+	//  *
+	//  * @param string value
+	//  */
+	// final public function groupCollapsed()
+	// {
+	// 	return $this->_log(self::GROUP_COLLAPSED, func_get_args());
+	// }
+	//
+	// /**
+	//  * ends a group log
+	//  *
+	//  * @param string value
+	//  */
+	// public function groupEnd()
+	// {
+	// 	return $this->_log(self::GROUP_END, func_get_args());
+	// }
 
 	/**
 	 * formats the location from backtrace using sprintf

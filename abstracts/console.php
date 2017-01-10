@@ -21,7 +21,7 @@
  */
 namespace shgysk8zer0\Core_API\Abstracts;
 
-abstract class Console implements \shgysk8zer0\Core_API\Interfaces\Console
+abstract class Console// implements \shgysk8zer0\Core_API\Interfaces\Console
 {
 	/**
 	 * @var string
