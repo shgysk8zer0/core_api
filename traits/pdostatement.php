@@ -23,6 +23,11 @@ namespace shgysk8zer0\Core_API\Traits;
 trait PDOStatement
 {
 	/**
+	 * Var to store if all statement executions were successful
+	 * @var bool (null if never executed)
+	 */
+	private $_success;
+	/**
 	 * Binds a parameter to the specified variable name
 	 *
 	 * @param  array  $params [key => value (no need to prefix key with ":")]
@@ -48,13 +53,34 @@ trait PDOStatement
 	 */
 	final public function execute($bound_input_params = null)
 	{
-		if (! is_array($bound_input_params) or empty($bound_input_params)) {
-			parent::execute();
+		if (!is_array($bound_input_params) or empty($bound_input_params)) {
+			$success = parent::execute();
 		} else {
-			parent::execute($this->bindConversion($bound_input_params));
+			$success = parent::execute($this->bindConversion($bound_input_params));
 		}
 
+		// Accumulative success of statement execution
+		if (is_null($this->_success)) {
+			// Success is not set, so it is the result of this execution
+			$this->_success = $success;
+		} else {
+			// Success is already set, so it is `&=`d to `$success`
+			// false &= true -> false
+			// true &= false -> false
+			// true &= true -> true
+			$this->_success &= $this->_success;
+		}
 		return $this;
+	}
+
+	/**
+	 * Returns true if all executions of statement were successful. Otherwise false
+	 * @param void
+	 * @return bool if all statement executions were successful
+	 */
+	final public function allSuccessful()
+	{
+		return $this->_success;
 	}
 
 	/**
@@ -66,7 +92,9 @@ trait PDOStatement
 	 */
 	final public function getResults($col = null, $fetch_style = \PDO::FETCH_CLASS)
 	{
-		if (is_int($col)) {
+		if (!$this->_success) {
+			return [];
+		} elseif (is_int($col)) {
 			return $this->fetchAll($fetch_style)[$col];
 		} else {
 			return $this->fetchAll($fetch_style);
