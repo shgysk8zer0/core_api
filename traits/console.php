@@ -171,13 +171,13 @@ trait Console
 		$this->_processed = array();
 
 		$logs = array_map([$this, '_convert'], $args);
-		$backtrace = debug_backtrace(false);
-		$level = $this->{self::BACKTRACE_LEVEL};
+		$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 4);
 		$backtrace_message = 'unknown';
-		if (isset($backtrace[$level]['file'], $backtrace[$level]['line'])) {
+		$backtrace = end($backtrace);
+		if (isset($backtrace['file'], $backtrace['line'])) {
 			$backtrace_message = $this->_formatLocation(
-				$backtrace[$level]['file'],
-				$backtrace[$level]['line']
+				$backtrace['file'],
+				$backtrace['line']
 			);
 		}
 		$this->_addRow($logs, $backtrace_message, $type);

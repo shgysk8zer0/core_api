@@ -26,7 +26,7 @@ abstract class Console// implements \shgysk8zer0\Core_API\Interfaces\Console
 	/**
 	 * @var string
 	 */
-	const LOG_FORMAT = '%s : %d';
+	const LOG_FORMAT = '%s:%d';
 
 	/**
 	 * @var string
