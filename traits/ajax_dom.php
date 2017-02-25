@@ -630,6 +630,32 @@ trait AJAX_DOM
 		$this->response['style']["$sel"]["$property"] = "$value";
 		return $this;
 	}
+	/**
+	 * Add animations using `Element.animate`
+	 * @param  String $sel       Passed to `document.querySelectorAll`
+	 * @param  Array  $keyframes Array of keyframes / steps in animation
+	 * @param  array  $opts      Array of options, such as duration
+	 * @return self
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Keyframe_Formats
+	 * @example
+	 *  $resp->animate('#login-dialog', [
+	 * 	 ['transform' => 'none'],
+	 * 	 ['transform' => 'translateX(5em)scale(0.9)'],
+	 * 	 ['transform' => 'translateX(-5em)scale(1.1)'],
+	 * 	 ['transform' => 'none']
+	 * ], [
+	 * 	 'duration'   => 100,
+	 * 	 'iterations' => 5,
+	 * ]);
+	 */
+	final public function animate($sel, Array  $keyframes, Array  $opts)
+	{
+		if (! array_key_exists('animate', $this->response)) {
+			$this->response['animate'] = [];
+		}
+		$this->response['animate'][$sel] = ['keyframes' => $keyframes, 'opts' => $opts];
+		return $this;
+	}
 
 	/**
 	 * Sets ID on Element matching $sel
