@@ -51,10 +51,11 @@ trait AJAX_DOM
 	 * @param string $title
 	 * @param string $body
 	 * @param string $icon
+	 * @param bool   $fallback  Use `alert` as fallback if notifications denied or not supported
 	 * @return self
-	 * @example $resp->notify('Title', 'Body', 'path/to/icon.png');
+	 * @example $resp->notify('Title', 'Body', 'path/to/icon.png', true);
 	 */
-	final public function notify($title = null, $body = null, $icon = null)
+	final public function notify($title = null, $body = null, $icon = null, $fallback = false)
 	{
 		$this->response['notify'] = [];
 		if (isset($title)) {
@@ -68,6 +69,7 @@ trait AJAX_DOM
 		if (isset($icon)) {
 			$this->response['notify']['icon'] = "$icon";
 		}
+		$this->response['notify']['fallback'] = $fallback;
 
 		return $this;
 	}
